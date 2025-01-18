@@ -1,0 +1,37 @@
+pluginManagement {
+    // Flutter SDK yolunu almak için local.properties dosyasındaki flutter.sdk değerini okur.
+    def flutterSdkPath = {
+        def properties = new Properties()
+        file("local.properties").withInputStream { properties.load(it) }
+        def flutterSdkPath = properties.getProperty("flutter.sdk")
+        assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
+        return flutterSdkPath
+    }()
+
+    // Flutter araçlarının gradle yapılandırmasını dahil eder.
+    includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
+
+    repositories {
+        // Google ve Maven Central repository'leri, proje bağımlılıkları için kullanılır.
+        google()
+        mavenCentral()
+        gradlePluginPortal() // Gradle plugin'lerini buradan alır.
+    }
+}
+
+plugins {
+    // Flutter plugin yükleyici
+    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
+
+    // Android uygulama için gerekli plugin
+    id "com.android.application" version "8.1.0" apply false
+
+    // Firebase servisleri için gerekli plugin
+    id "com.google.gms.google-services" version "4.3.15" apply false
+
+    // Kotlin desteği için gerekli plugin
+    id "org.jetbrains.kotlin.android" version "1.8.22" apply false
+}
+
+// Bu satırda sadece :app modülünü dahil ediyoruz, diğer modüller eklenmediği için sadece :app kullanılır.
+include ":app"

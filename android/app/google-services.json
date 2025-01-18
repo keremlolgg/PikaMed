@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "770930842223",
+    "project_id": "marul-tarlasii",
+    "storage_bucket": "marul-tarlasii.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:770930842223:android:f6775bef3a22e2805d8b9a",
+        "android_client_info": {
+          "package_name": "com.kk.marultarlasi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "770930842223-i1fj75c32rrt9f891t4bu350tbtlmo4c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kk.marultarlasi",
+            "certificate_hash": "0732ab84ed46d42e7a94a368d08a73f0e1c7a0ec"
+          }
+        },
+        {
+          "client_id": "770930842223-fcoq5uvmr1sgait14e75i3vemqd3gd4v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDoIulHSNBr_A2HeaVNbiIPtzivNWsnns8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "770930842223-fcoq5uvmr1sgait14e75i3vemqd3gd4v.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "770930842223-t4vgvv2h6eh7mkkc423g83c0l1s21278.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kk.marultarlasi.marulTarlasi"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
