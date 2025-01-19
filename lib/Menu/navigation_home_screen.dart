@@ -15,6 +15,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'dart:convert';
 import 'package:easy_url_launcher/easy_url_launcher.dart';
 import 'package:Marul_Tarlasi/functions.dart';
+
 class NavigationHomeScreen extends StatefulWidget {
   @override
   _NavigationHomeScreenState createState() => _NavigationHomeScreenState();
@@ -34,7 +35,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
     Future<void> _fetchData() async {
       try {
         final response = await http.get(Uri.parse(
-            'https://raw.githubusercontent.com/keremlolgg/GeoGame/main/latest_version.json'));
+            'https://raw.githubusercontent.com/keremlolgg/marul-tarlasi/main/latest_version.json'));
         if (response.statusCode == 200) {
           final data = json.decode(response.body);
 
@@ -102,11 +103,11 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
     });
     if(_user==null) {
       setState(() {
-        screenView =IntroductionAnimationScreen();
+        screenView =GirisAnimasyonScreen();
       });
     } else {
       setState(() {
-        screenView = FitnessAppHomeScreen();
+        screenView = HastaHomeScreen();
       });
     }
     super.initState();
@@ -137,25 +138,36 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
     );
   }
 
-  void changeIndex(DrawerIndex drawerIndexdata) {
-    if (drawerIndex != drawerIndexdata) {
+  void changeIndex(DrawerIndex drawerIndexdata) async {
       drawerIndex = drawerIndexdata;
       switch (drawerIndex) {
         case DrawerIndex.HOME:
           if(_user==null) {
             setState(() {
-              screenView =IntroductionAnimationScreen();
+              screenView =GirisAnimasyonScreen();
             });
           } else {
             setState(() {
-              screenView = FitnessAppHomeScreen();
+              screenView = HastaHomeScreen();
             });
           }
           break;
         case DrawerIndex.Doctor:
-          setState(() {
-            screenView = HotelHomeScreen();
-          });
+          bool isDoctorUser = await isDoctor();
+          if (isDoctorUser) {
+            setState(() {
+              screenView = DoktorHomeScreen();
+            });
+          } else {
+            ScaffoldMessenger.of(context).removeCurrentSnackBar();
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Doktor menüsüne girmek için yetkiniz bulunmuyor.'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
           break;
         case DrawerIndex.Help:
           setState(() {
@@ -210,6 +222,5 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
           break;
       }
     }
-  }
 
 }

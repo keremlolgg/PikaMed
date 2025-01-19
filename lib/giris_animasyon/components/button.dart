@@ -44,9 +44,10 @@ class _CenterNextButtonState extends State<CenterNextButton> {
 
       // Kullanıcı adını al
       String isim = user?.displayName ?? "Error";
+      String email = user?.email ?? "Error";
 
       // Sunucuya kullanıcı verisini gönder
-      await sendDataToServer(isim);
+      await sendDataToServer(isim, email);
 
       return user;
     } catch (error) {
@@ -55,14 +56,15 @@ class _CenterNextButtonState extends State<CenterNextButton> {
     }
   }
 
-  Future<void> sendDataToServer(String isim) async {
+  Future<void> sendDataToServer(String isim,String email) async {
     try {
-      final targetUrl = 'https://your-api-server.com/signin'; // API URL'nizi buraya ekleyin
+      final targetUrl = '$apiserver/signin';
       final response = await http.post(
         Uri.parse(targetUrl),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'sebep': 'Giriş',
+          'email': email,
           'name': isim,
         }),
       ).timeout(Duration(seconds: 30));
