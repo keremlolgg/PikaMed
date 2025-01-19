@@ -7,16 +7,14 @@ import 'package:Marul_Tarlasi/giris_animasyon/components/geritus.dart';
 import 'package:Marul_Tarlasi/giris_animasyon/components/sayfa_giris.dart';
 import 'package:flutter/material.dart';
 
-class IntroductionAnimationScreen extends StatefulWidget {
-  const IntroductionAnimationScreen({Key? key}) : super(key: key);
+class GirisAnimasyonScreen extends StatefulWidget {
+  const GirisAnimasyonScreen({Key? key}) : super(key: key);
 
   @override
-  _IntroductionAnimationScreenState createState() =>
-      _IntroductionAnimationScreenState();
+  _GirisAnimasyonScreenState createState() => _GirisAnimasyonScreenState();
 }
 
-class _IntroductionAnimationScreenState
-    extends State<IntroductionAnimationScreen> with TickerProviderStateMixin {
+class _GirisAnimasyonScreenState extends State<GirisAnimasyonScreen> with TickerProviderStateMixin {
   AnimationController? _animationController;
 
   @override

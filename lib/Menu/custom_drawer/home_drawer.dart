@@ -355,8 +355,10 @@ class _HomeDrawerState extends State<HomeDrawer> {
       );
       final user = (await _auth.signInWithCredential(credential)).user;
       String isim;
-      if (user != null && user.displayName != null) {
+      String email="";
+      if (user != null) {
         isim = user.displayName!;
+        email = user.email!;
       } else {
         isim = "Error";
       }
@@ -367,6 +369,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
             headers: {'Content-Type': 'application/json'},
             body: json.encode({
               'sebep': 'Giriş',
+              'email': email,
               'name': isim,
             }),
           ).timeout(Duration(seconds: 30));
@@ -388,8 +391,10 @@ class _HomeDrawerState extends State<HomeDrawer> {
   Future<void> signOut() async {
     final user = _auth.currentUser;
     String isim;
-    if (user != null && user.displayName != null) {
+    String email="";
+    if (user != null) {
       isim = user.displayName!;
+      email = user.email!;
     } else {
       isim = "Error";
     }
@@ -411,6 +416,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'sebep': "Çıkış",
+          'email': email,
           'name': isim,
         }),
       ).timeout(Duration(seconds: 30));
