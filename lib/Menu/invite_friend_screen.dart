@@ -35,7 +35,7 @@ class _InviteFriendState extends State<InviteFriend> {
               Container(
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
-                  'Invite Your Friends',
+                  'Arkadaşını Davet Et.',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -46,7 +46,7 @@ class _InviteFriendState extends State<InviteFriend> {
               Container(
                 padding: const EdgeInsets.only(top: 16),
                 child: Text(
-                  'Are you one of those who makes everything\n at the last moment?',
+                  'Her şeyi son dakikada yapan insanlardan mısınız?',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
@@ -92,7 +92,7 @@ class _InviteFriendState extends State<InviteFriend> {
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: Text(
-                                    'Share',
+                                    'Paylaş',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w500,
                                       color: isLightMode

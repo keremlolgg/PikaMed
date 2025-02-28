@@ -19,7 +19,7 @@ class MealsListView extends StatefulWidget {
 class _MealsListViewState extends State<MealsListView>
     with TickerProviderStateMixin {
   AnimationController? animationController;
-  List<MealsListData> mealsListData = MealsListData.tabIconsList;
+  List<InsulinListData> mealsListData = InsulinListData.insulinList;
 
   @override
   void initState() {
@@ -69,7 +69,7 @@ class _MealsListViewState extends State<MealsListView>
                   animationController?.forward();
 
                   return MealsView(
-                    mealsListData: mealsListData[index],
+                    insulinList: mealsListData[index],
                     animation: animation,
                     animationController: animationController!,
                   );
@@ -85,10 +85,10 @@ class _MealsListViewState extends State<MealsListView>
 
 class MealsView extends StatelessWidget {
   const MealsView(
-      {Key? key, this.mealsListData, this.animationController, this.animation})
+      {Key? key, this.insulinList, this.animationController, this.animation})
       : super(key: key);
 
-  final MealsListData? mealsListData;
+  final InsulinListData? insulinList;
   final AnimationController? animationController;
   final Animation<double>? animation;
 
@@ -113,15 +113,15 @@ class MealsView extends StatelessWidget {
                       decoration: BoxDecoration(
                         boxShadow: <BoxShadow>[
                           BoxShadow(
-                              color: HexColor(mealsListData!.endColor)
+                              color: HexColor(insulinList!.endColor)
                                   .withOpacity(0.6),
                               offset: const Offset(1.1, 4.0),
                               blurRadius: 8.0),
                         ],
                         gradient: LinearGradient(
                           colors: <HexColor>[
-                            HexColor(mealsListData!.startColor),
-                            HexColor(mealsListData!.endColor),
+                            HexColor(insulinList!.startColor),
+                            HexColor(insulinList!.endColor),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -141,7 +141,7 @@ class MealsView extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              mealsListData!.titleTxt,
+                              insulinList!.titleTxt,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontFamily: FitnessAppTheme.fontName,
@@ -152,34 +152,25 @@ class MealsView extends StatelessWidget {
                               ),
                             ),
                             Expanded(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 8, bottom: 8),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      mealsListData!.meals!.join('\n'),
-                                      style: TextStyle(
-                                        fontFamily: FitnessAppTheme.fontName,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 10,
-                                        letterSpacing: 0.2,
-                                        color: FitnessAppTheme.white,
-                                      ),
-                                    ),
-                                  ],
+                              child: Text(
+                                insulinList!.insulinDoses.map((dose) => '${dose.type}: ${dose.dose} ünite').join('\n'),
+                                style: TextStyle(
+                                  fontFamily: FitnessAppTheme.fontName,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 10,
+                                  letterSpacing: 0.2,
+                                  color: FitnessAppTheme.white,
                                 ),
+                                softWrap: true, // Satır kaydırmayı açar
                               ),
                             ),
-                            mealsListData?.kacl != 0
+                            insulinList?.kacl != 0
                                 ? Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: <Widget>[
                                       Text(
-                                        mealsListData!.kacl.toString(),
+                                        insulinList!.kacl.toString(),
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           fontFamily: FitnessAppTheme.fontName,
@@ -222,7 +213,7 @@ class MealsView extends StatelessWidget {
                                       padding: const EdgeInsets.all(6.0),
                                       child: Icon(
                                         Icons.add,
-                                        color: HexColor(mealsListData!.endColor),
+                                        color: HexColor(insulinList!.endColor),
                                         size: 24,
                                       ),
                                     ),
@@ -250,7 +241,7 @@ class MealsView extends StatelessWidget {
                     child: SizedBox(
                       width: 80,
                       height: 80,
-                      child: Image.asset(mealsListData!.imagePath),
+                      child: Image.asset(insulinList!.imagePath),
                     ),
                   )
                 ],

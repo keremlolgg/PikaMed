@@ -224,7 +224,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Oturum açma hatası: $e")),
         );
-        print('Oturum açma hatası: $e');
+        debugPrint('Oturum açma hatası: $e');
       }
     }
     else {
@@ -340,11 +340,12 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
   Future<firebase_auth.User?> googleSignIn() async {
     try {
+      await GoogleSignIn().signOut();
       final googleUser = await GoogleSignIn().signIn();
 
       if (googleUser == null) {
         // Kullanıcı oturum açmayı iptal etti
-        print("Kullanıcı oturum açmayı iptal etti.");
+        debugPrint("Kullanıcı oturum açmayı iptal etti.");
         return null;
       }
 
@@ -356,35 +357,53 @@ class _HomeDrawerState extends State<HomeDrawer> {
       final user = (await _auth.signInWithCredential(credential)).user;
       String isim;
       String email="";
+      String uid="";
+      String profilurl="";
       if (user != null) {
-        isim = user.displayName!;
+        isim =  user.providerData.first.displayName!;
         email = user.email!;
+        uid = user.uid;
+        profilurl = user.photoURL!;
       } else {
         isim = "Error";
       }
-        try {
-          final targetUrl = '${apiserver}/signin';
-          final response = await http.post(
-            Uri.parse(targetUrl),
-            headers: {'Content-Type': 'application/json'},
-            body: json.encode({
-              'sebep': 'Giriş',
-              'email': email,
-              'name': isim,
-            }),
-          ).timeout(Duration(seconds: 30));
+      try {
+        final targetUrl = '${apiserver}/authlog';
+        final response = await http.post(
+          Uri.parse(targetUrl),
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'sebep': 'Giriş',
+            'uid': uid,
+            'name': isim,
+            'email': email,
+            'profilUrl': profilurl,
+          }),
+        ).timeout(Duration(seconds: 30));
 
-          if (response.statusCode == 200) {
-            print('Mesaj başarıyla gönderildi!');
-          } else {
-            print('Mesaj gönderilemedi: ${response.statusCode}');
-          }
-        } catch (e) {
-          print('Hata: $e');
+        if (response.statusCode == 200) {
+          debugPrint('Mesaj başarıyla gönderildi!');
+        } else {
+          // Yanıtın içeriğini de yazdır
+          debugPrint('Mesaj gönderilemedi: ${response.statusCode}');
+          debugPrint('Yanıt içeriği: ${response.body}');
         }
+      } catch (e) {
+        // Hata türünü ve mesajını yazdır
+        debugPrint('Hata: ${e.toString()}');
+
+        // Eğer hata bir http isteği ile ilgiliyse, daha fazla bilgi ekleyebiliriz
+        if (e is http.ClientException) {
+          debugPrint('HTTP İsteği Hatası: ${e.message}');
+        } else if (e is TimeoutException) {
+          debugPrint('Zaman aşımı hatası: İstek zaman aşımına uğradı.');
+        } else {
+          debugPrint('Bilinmeyen hata: ${e.runtimeType}');
+        }
+      }
       return user;
     } catch (error) {
-      print("Google Sign-In Hatası: $error");
+      debugPrint("Google Sign-In Hatası: $error");
       return null;
     }
   }
@@ -392,9 +411,13 @@ class _HomeDrawerState extends State<HomeDrawer> {
     final user = _auth.currentUser;
     String isim;
     String email="";
+    String uid="";
+    String profilurl="";
     if (user != null) {
-      isim = user.displayName!;
+      isim = user.providerData.first.displayName!;
       email = user.email!;
+      uid = user.uid;
+      profilurl = user.photoURL!;
     } else {
       isim = "Error";
     }
@@ -410,24 +433,37 @@ class _HomeDrawerState extends State<HomeDrawer> {
     _auth.signOut();
     setState(() => this._user = null);
     try {
-      final targetUrl = '${apiserver}/signout';
+      final targetUrl = '${apiserver}/authlog';
+      final requestBody = {
+        'sebep': "Çıkış",
+        'email': email,
+        'name': isim,
+        'uid': uid,
+        'profilUrl': profilurl,
+      };
+
+      debugPrint('Çıkış isteği API\'ye gönderiliyor: $targetUrl');
+      debugPrint('İstek verileri: ${json.encode(requestBody)}');
+
       final response = await http.post(
         Uri.parse(targetUrl),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'sebep': "Çıkış",
-          'email': email,
-          'name': isim,
-        }),
+        body: json.encode(requestBody),
       ).timeout(Duration(seconds: 30));
 
+      debugPrint('API yanıt kodu: ${response.statusCode}');
+      debugPrint('API yanıtı: ${response.body}');
+
       if (response.statusCode == 200) {
-        print('Mesaj başarıyla gönderildi!');
+        debugPrint('Çıkış mesajı başarıyla gönderildi!');
       } else {
-        print('Mesaj gönderilemedi: ${response.statusCode}');
+        debugPrint('Çıkış mesajı gönderilemedi: ${response.statusCode} - ${response.body}');
       }
-    } catch (e) {
-      print('Hata: $e');
+    } on TimeoutException {
+      debugPrint('Hata: Çıkış isteği zaman aşımına uğradı!');
+    } catch (e, stackTrace) {
+      debugPrint('Hata: $e');
+      debugPrint('StackTrace: $stackTrace');
     }
   }
 }

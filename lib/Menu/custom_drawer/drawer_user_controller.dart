@@ -120,9 +120,7 @@ class _DrawerUserControllerState extends State<DrawerUserController>
                       transform: Matrix4.translationValues(
                           scrollController!.offset, 0.0, 0.0),
                       child: HomeDrawer(
-                        screenIndex: widget.screenIndex == null
-                            ? DrawerIndex.HOME
-                            : widget.screenIndex,
+                        screenIndex: widget.screenIndex ?? DrawerIndex.HOME,
                         iconAnimationController: iconAnimationController,
                         callBackIndex: (DrawerIndex indexType) {
                           onDrawerClick();
@@ -177,15 +175,10 @@ class _DrawerUserControllerState extends State<DrawerUserController>
                                   AppBar().preferredSize.height),
                               child: Center(
                                 // if you use your own menu view UI you add form initialization
-                                child: widget.menuView != null
-                                    ? widget.menuView
-                                    : AnimatedIcon(
-                                        color: isLightMode
-                                            ? AppTheme.dark_grey
-                                            : AppTheme.white,
-                                        icon: widget.animatedIconData ??
-                                            AnimatedIcons.arrow_menu,
-                                        progress: iconAnimationController!),
+                                child: widget.menuView ?? AnimatedIcon(
+                                  icon: widget.animatedIconData ?? AnimatedIcons.arrow_menu,
+                                  progress: iconAnimationController!,
+                                ),
                               ),
                               onTap: () {
                                 FocusScope.of(context)

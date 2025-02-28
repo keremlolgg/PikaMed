@@ -23,13 +23,29 @@ class CenterNextButton extends StatefulWidget {
 
 class _CenterNextButtonState extends State<CenterNextButton> {
 
-  Future<firebase_auth.User?> googleSignIn() async {
+  Future<void> onTapped(BuildContext context) async {
+    final _auth = firebase_auth.FirebaseAuth.instance;
+    firebase_auth.User? user = await googleSignIn(_auth);
+
+    if (user != null) {
+      debugPrint('Google ile giriş başarılı: ${user.displayName}');
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
+      );
+    } else {
+      debugPrint('Google ile giriş başarısız.');
+    }
+  }
+
+  Future<firebase_auth.User?> googleSignIn(firebase_auth.FirebaseAuth _auth) async {
     try {
+      await GoogleSignIn().signOut();
       final googleUser = await GoogleSignIn().signIn();
 
       if (googleUser == null) {
-        // Kullanıcı oturum açmayı iptal etti
-        print("Kullanıcı oturum açmayı iptal etti.");
+        debugPrint("Kullanıcı oturum açmayı iptal etti.");
         return null;
       }
 
@@ -38,75 +54,38 @@ class _CenterNextButtonState extends State<CenterNextButton> {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      final user = (await firebase_auth.FirebaseAuth.instance
-          .signInWithCredential(credential))
-          .user;
 
-      // Kullanıcı adını al
-      String isim = user?.displayName ?? "Error";
-      String email = user?.email ?? "Error";
+      final user = (await _auth.signInWithCredential(credential)).user;
+      if (user == null) {
+        debugPrint("Google Sign-In başarısız.");
+        return null;
+      }
 
-      // Sunucuya kullanıcı verisini gönder
-      await sendDataToServer(isim, email);
+      try {
+        final targetUrl = '$apiserver/signin';  // 'apiserver' değişkeni tanımlanmamıştı
+        final response = await http.post(
+          Uri.parse(targetUrl),
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'sebep': 'Giriş',
+            'email': user.email ?? "",
+            'name': user.displayName ?? "Bilinmiyor",
+          }),
+        ).timeout(Duration(seconds: 30));
+
+        if (response.statusCode == 200) {
+          debugPrint('Mesaj başarıyla gönderildi!');
+        } else {
+          debugPrint('Mesaj gönderilemedi: ${response.statusCode}');
+        }
+      } catch (e) {
+        debugPrint('API İstek Hatası: $e');
+      }
 
       return user;
     } catch (error) {
-      print("Google Sign-In Hatası: $error");
+      debugPrint("Google Sign-In Hatası: $error");
       return null;
-    }
-  }
-
-  Future<void> sendDataToServer(String isim,String email) async {
-    try {
-      final targetUrl = '$apiserver/signin';
-      final response = await http.post(
-        Uri.parse(targetUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'sebep': 'Giriş',
-          'email': email,
-          'name': isim,
-        }),
-      ).timeout(Duration(seconds: 30));
-
-      if (response.statusCode == 200) {
-        print('Mesaj başarıyla gönderildi!');
-      } else {
-        print('Mesaj gönderilemedi: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Hata: $e');
-    }
-  }
-
-  Future<void> onTapped(BuildContext context) async {
-    try {
-      final user = await googleSignIn();
-      if (user == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Google oturum açma başarısız!")),
-        );
-        return;
-      }
-
-      // Firebase kullanıcısını kontrol et
-      firebase_auth.User? _user = firebase_auth.FirebaseAuth.instance.currentUser;
-
-      if (_user != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Firebase oturumu başarısız!")),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Oturum açma hatası: $e")),
-      );
-      debugPrint('Oturum açma hatası: $e');
     }
   }
 

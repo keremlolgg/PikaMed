@@ -1,28 +1,32 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 
-String apiserver = "";
+String apiserver = "https://keremkk.glitch.me/marultarlasi";
 
-Future<void> postmessage(String message,String neden,String api) async {
+Future<void> postmessage(String message, String neden, String api, String? isim, String? eposta, String? uid) async {
   try {
-    final targetUrl = '${apiserver}/$api';
+    final targetUrl = '$apiserver/$api';
     final response = await http.post(
       Uri.parse(targetUrl),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({
         'sebep': neden,
         'message': message,
+        'isim': isim,
+        'eposta': eposta,
+        'uid': uid,
       }),
     ).timeout(Duration(seconds: 30));
 
     if (response.statusCode == 200) {
-      print('Mesaj başarıyla gönderildi!');
+      debugPrint('Mesaj başarıyla gönderildi!');
     } else {
-      print('Mesaj gönderilemedi: ${response.statusCode}');
+      debugPrint('Mesaj gönderilemedi: ${response.statusCode}');
     }
   } catch (e) {
-    print('Hata: $e');
+    debugPrint('Hata: $e');
   }
 }
 

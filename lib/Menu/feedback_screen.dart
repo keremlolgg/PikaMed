@@ -1,15 +1,26 @@
 import 'package:Marul_Tarlasi/model/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:Marul_Tarlasi/functions.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+
 class FeedbackScreen extends StatefulWidget {
   @override
   _FeedbackScreenState createState() => _FeedbackScreenState();
 }
 String mesaj="";
 class _FeedbackScreenState extends State<FeedbackScreen> {
+  final _auth = firebase_auth.FirebaseAuth.instance;
+  firebase_auth.User? _user;
   @override
   void initState() {
     super.initState();
+    _user = _auth.currentUser;
+    _auth.authStateChanges().listen((firebase_auth.User? user) {
+      setState(() {
+        _user = user;
+      });
+      debugPrint('user=$_user');
+    });
   }
 
   @override
@@ -77,7 +88,18 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                           color: Colors.transparent,
                           child: InkWell(
                             onTap: () {
-                              postmessage(mesaj,'Marul Tarlası Uygulama Feedback', 'marultarlasifeedback');
+                              if (_user != null) {
+                                postmessage(
+                                  mesaj,
+                                  'Marul Tarlası Uygulama Feedback',
+                                  'marultarlasifeedback',
+                                  _user!.displayName ?? "Bilinmeyen Kullanıcı",
+                                  _user!.email ?? "Bilinmeyen E-posta",
+                                  _user!.uid,
+                                );
+                              } else {
+                                debugPrint("Hata: Kullanıcı bilgileri alınamadı.");
+                              }
                               FocusScope.of(context).requestFocus(FocusNode());
                             },
                             child: Center(
