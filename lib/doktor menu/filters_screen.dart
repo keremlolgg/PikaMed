@@ -1,9 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'range_slider_view.dart';
-import 'slider_view.dart';
-import 'hotel_app_theme.dart';
-import 'model/popular_filter_list.dart';
+import 'doktor_app_thema.dart';
+import 'model/hasta_list_data.dart';
 
 class FiltersScreen extends StatefulWidget {
   @override
@@ -11,13 +8,12 @@ class FiltersScreen extends StatefulWidget {
 }
 
 class _FiltersScreenState extends State<FiltersScreen> {
-  List<PopularFilterListData> popularFilterListData =
-      PopularFilterListData.popularFList;
-  List<PopularFilterListData> accomodationListData =
-      PopularFilterListData.accomodationList;
+  List<PatientListData> patientListData = PatientListData.patientsList;
 
-  RangeValues _values = const RangeValues(100, 600);
-  double distValue = 50.0;
+  // Filtreleme için değişkenler
+  RangeValues _ageRange = const RangeValues(20, 60);
+  RangeValues _weightRange = const RangeValues(50, 100);
+  String selectedDisease = 'All';
 
   @override
   Widget build(BuildContext context) {
@@ -32,29 +28,20 @@ class _FiltersScreenState extends State<FiltersScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
-                    priceBarFilter(),
-                    const Divider(
-                      height: 1,
-                    ),
-                    popularFilter(),
-                    const Divider(
-                      height: 1,
-                    ),
-                    distanceViewUI(),
-                    const Divider(
-                      height: 1,
-                    ),
-                    allAccommodationUI()
+                    ageFilter(),
+                    const Divider(height: 1),
+                    weightFilter(),
+                    const Divider(height: 1),
+                    diseaseFilter(),
+                    const Divider(height: 1),
+                    filteredPatientsList()
                   ],
                 ),
               ),
             ),
-            const Divider(
-              height: 1,
-            ),
+            const Divider(height: 1),
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 16, right: 16, bottom: 16, top: 8),
+              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 8),
               child: Container(
                 height: 48,
                 decoration: BoxDecoration(
@@ -88,253 +75,15 @@ class _FiltersScreenState extends State<FiltersScreen> {
                   ),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget allAccommodationUI() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding:
-              const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
-          child: Text(
-            'Type of Accommodation',
-            textAlign: TextAlign.left,
-            style: TextStyle(
-                color: Colors.grey,
-                fontSize: MediaQuery.of(context).size.width > 360 ? 18 : 16,
-                fontWeight: FontWeight.normal),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(right: 16, left: 16),
-          child: Column(
-            children: getAccomodationListUI(),
-          ),
-        ),
-        const SizedBox(
-          height: 8,
-        ),
-      ],
-    );
-  }
-
-  List<Widget> getAccomodationListUI() {
-    final List<Widget> noList = <Widget>[];
-    for (int i = 0; i < accomodationListData.length; i++) {
-      final PopularFilterListData date = accomodationListData[i];
-      noList.add(
-        Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: const BorderRadius.all(Radius.circular(4.0)),
-            onTap: () {
-              setState(() {
-                checkAppPosition(i);
-              });
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Text(
-                      date.titleTxt,
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  CupertinoSwitch(
-                    activeTrackColor: date.isSelected
-                        ? HotelAppTheme.buildLightTheme().primaryColor
-                        : Colors.grey.withOpacity(0.6),
-                    onChanged: (bool value) {
-                      setState(() {
-                        checkAppPosition(i);
-                      });
-                    },
-                    value: date.isSelected,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-      if (i == 0) {
-        noList.add(const Divider(
-          height: 1,
-        ));
-      }
-    }
-    return noList;
-  }
-
-  void checkAppPosition(int index) {
-    if (index == 0) {
-      if (accomodationListData[0].isSelected) {
-        accomodationListData.forEach((d) {
-          d.isSelected = false;
-        });
-      } else {
-        accomodationListData.forEach((d) {
-          d.isSelected = true;
-        });
-      }
-    } else {
-      accomodationListData[index].isSelected =
-          !accomodationListData[index].isSelected;
-
-      int count = 0;
-      for (int i = 0; i < accomodationListData.length; i++) {
-        if (i != 0) {
-          final PopularFilterListData data = accomodationListData[i];
-          if (data.isSelected) {
-            count += 1;
-          }
-        }
-      }
-
-      if (count == accomodationListData.length - 1) {
-        accomodationListData[0].isSelected = true;
-      } else {
-        accomodationListData[0].isSelected = false;
-      }
-    }
-  }
-
-  Widget distanceViewUI() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding:
-              const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
-          child: Text(
-            'Distance from city center',
-            textAlign: TextAlign.left,
-            style: TextStyle(
-                color: Colors.grey,
-                fontSize: MediaQuery.of(context).size.width > 360 ? 18 : 16,
-                fontWeight: FontWeight.normal),
-          ),
-        ),
-        SliderView(
-          distValue: distValue,
-          onChangedistValue: (double value) {
-            distValue = value;
-          },
-        ),
-        const SizedBox(
-          height: 8,
-        ),
-      ],
-    );
-  }
-
-  Widget popularFilter() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding:
-              const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
-          child: Text(
-            'Popular filters',
-            textAlign: TextAlign.left,
-            style: TextStyle(
-                color: Colors.grey,
-                fontSize: MediaQuery.of(context).size.width > 360 ? 18 : 16,
-                fontWeight: FontWeight.normal),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(right: 16, left: 16),
-          child: Column(
-            children: getPList(),
-          ),
-        ),
-        const SizedBox(
-          height: 8,
-        )
-      ],
-    );
-  }
-
-  List<Widget> getPList() {
-    final List<Widget> noList = <Widget>[];
-    int count = 0;
-    const int columnCount = 2;
-    for (int i = 0; i < popularFilterListData.length / columnCount; i++) {
-      final List<Widget> listUI = <Widget>[];
-      for (int i = 0; i < columnCount; i++) {
-        try {
-          final PopularFilterListData date = popularFilterListData[count];
-          listUI.add(Expanded(
-            child: Row(
-              children: <Widget>[
-                Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: const BorderRadius.all(Radius.circular(4.0)),
-                    onTap: () {
-                      setState(() {
-                        date.isSelected = !date.isSelected;
-                      });
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(
-                            date.isSelected
-                                ? Icons.check_box
-                                : Icons.check_box_outline_blank,
-                            color: date.isSelected
-                                ? HotelAppTheme.buildLightTheme().primaryColor
-                                : Colors.grey.withOpacity(0.6),
-                          ),
-                          const SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            date.titleTxt,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ));
-          if (count < popularFilterListData.length - 1) {
-            count += 1;
-          } else {
-            break;
-          }
-        } catch (e) {
-          print(e);
-        }
-      }
-      noList.add(Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: listUI,
-      ));
-    }
-    return noList;
-  }
-
-  Widget priceBarFilter() {
+  // Yaş filtresi
+  Widget ageFilter() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -342,7 +91,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            'Price (for 1 night)',
+            'Age Range',
             textAlign: TextAlign.left,
             style: TextStyle(
                 color: Colors.grey,
@@ -350,17 +99,125 @@ class _FiltersScreenState extends State<FiltersScreen> {
                 fontWeight: FontWeight.normal),
           ),
         ),
-        RangeSliderView(
-          values: _values,
-          onChangeRangeValues: (RangeValues values) {
-            _values = values;
+        RangeSlider(
+          values: _ageRange,
+          min: 0,
+          max: 100,
+          divisions: 100,
+          labels: RangeLabels(
+            _ageRange.start.round().toString(),
+            _ageRange.end.round().toString(),
+          ),
+          onChanged: (RangeValues values) {
+            setState(() {
+              _ageRange = values;
+              filterPatients();
+            });
           },
         ),
-        const SizedBox(
-          height: 8,
-        )
+        const SizedBox(height: 8),
       ],
     );
+  }
+
+  // Kilo filtresi
+  Widget weightFilter() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            'Weight Range',
+            textAlign: TextAlign.left,
+            style: TextStyle(
+                color: Colors.grey,
+                fontSize: MediaQuery.of(context).size.width > 360 ? 18 : 16,
+                fontWeight: FontWeight.normal),
+          ),
+        ),
+        RangeSlider(
+          values: _weightRange,
+          min: 0,
+          max: 200,
+          divisions: 100,
+          labels: RangeLabels(
+            _weightRange.start.round().toString(),
+            _weightRange.end.round().toString(),
+          ),
+          onChanged: (RangeValues values) {
+            setState(() {
+              _weightRange = values;
+              filterPatients();
+            });
+          },
+        ),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+
+  // Hastalık filtresi
+  Widget diseaseFilter() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            'Disease Filter',
+            textAlign: TextAlign.left,
+            style: TextStyle(
+                color: Colors.grey,
+                fontSize: MediaQuery.of(context).size.width > 360 ? 18 : 16,
+                fontWeight: FontWeight.normal),
+          ),
+        ),
+        DropdownButton<String>(
+          value: selectedDisease,
+          onChanged: (String? newValue) {
+            setState(() {
+              selectedDisease = newValue!;
+              filterPatients();
+            });
+          },
+          items: <String>['All', 'Diabetes', 'Hypertension', 'Asthma', 'Arthritis', 'None']
+              .map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+
+  // Filtrelenmiş hasta listesi
+  Widget filteredPatientsList() {
+    return Column(
+      children: patientListData.map((patient) {
+        return Visibility(
+          visible: patient.age >= _ageRange.start &&
+              patient.age <= _ageRange.end &&
+              patient.weight >= _weightRange.start &&
+              patient.weight <= _weightRange.end &&
+              (selectedDisease == 'All' || patient.disease == selectedDisease),
+          child: ListTile(
+            title: Text(patient.name),
+            subtitle: Text('${patient.age} years old, ${patient.disease}'),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  // Hastaları filtreleme
+  void filterPatients() {
+    setState(() {});
   }
 
   Widget getAppBarUI() {
@@ -413,7 +270,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
             Container(
               width: AppBar().preferredSize.height + 40,
               height: AppBar().preferredSize.height,
-            )
+            ),
           ],
         ),
       ),

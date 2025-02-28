@@ -100,7 +100,7 @@ class _WaterViewState extends State<WaterView> with TickerProviderStateMixin {
                                   padding: const EdgeInsets.only(
                                       left: 4, top: 2, bottom: 14),
                                   child: Text(
-                                    'of daily goal 3.5L',
+                                    'Günlük hedefin 3,5L',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontFamily: FitnessAppTheme.fontName,
@@ -149,7 +149,7 @@ class _WaterViewState extends State<WaterView> with TickerProviderStateMixin {
                                         padding:
                                             const EdgeInsets.only(left: 4.0),
                                         child: Text(
-                                          'Last drink 8:26 AM',
+                                          'Son içecek 20:26',
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             fontFamily:
@@ -180,7 +180,7 @@ class _WaterViewState extends State<WaterView> with TickerProviderStateMixin {
                                         ),
                                         Flexible(
                                           child: Text(
-                                            'Your bottle is empty, refill it!.',
+                                            'Şişeniz boşaldı, doldurun!',
                                             textAlign: TextAlign.start,
                                             style: TextStyle(
                                               fontFamily:

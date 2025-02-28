@@ -12,6 +12,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:23.1.0'
     implementation 'com.google.android.gms:play-services-auth:21.3.0'
     implementation 'com.google.firebase:firebase-auth:23.1.0'
+    implementation 'com.google.firebase:firebase-messaging:24.1.0'
     implementation 'com.google.android.gms:play-services-measurement-api:22.1.2'
 }
 
@@ -67,4 +68,3 @@ android {
 flutter {
     source = "../.."
 }
-

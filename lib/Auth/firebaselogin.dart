@@ -61,7 +61,7 @@ class _FirebaseLoginState extends State<FirebaseLogin> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Oturum açma hatası: $e")),
           );
-          print('Oturum açma hatası: $e');
+          debugPrint('Oturum açma hatası: $e');
         }
       },
       child: const Text('Log in with Google'),
@@ -97,7 +97,7 @@ class _FirebaseLoginState extends State<FirebaseLogin> {
 
       if (googleUser == null) {
         // Kullanıcı oturum açmayı iptal etti
-        print("Kullanıcı oturum açmayı iptal etti.");
+        debugPrint("Kullanıcı oturum açmayı iptal etti.");
         return null;
       }
 
@@ -109,7 +109,7 @@ class _FirebaseLoginState extends State<FirebaseLogin> {
       final user = (await _auth.signInWithCredential(credential)).user;
       return user;
     } catch (error) {
-      print("Google Sign-In Hatası: $error");
+      debugPrint("Google Sign-In Hatası: $error");
       return null;
     }
   }

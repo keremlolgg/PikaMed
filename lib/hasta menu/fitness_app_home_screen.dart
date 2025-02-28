@@ -31,6 +31,26 @@ class _HastaHomeScreenState extends State<HastaHomeScreen>
         duration: const Duration(milliseconds: 600), vsync: this);
     tabBody = MyDiaryScreen(animationController: animationController);
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Uyarı'),
+            content: Text('Bu sayfa düzelecek bu sadece bir demo.'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('Tamam'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    });
   }
 
   @override

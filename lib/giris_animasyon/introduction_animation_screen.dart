@@ -33,7 +33,7 @@ class _GirisAnimasyonScreenState extends State<GirisAnimasyonScreen> with Ticker
 
   @override
   Widget build(BuildContext context) {
-    print(_animationController?.value);
+    debugPrint(_animationController?.value.toString());
     return Scaffold(
       backgroundColor: Color(0xffF7EBE1),
       body: ClipRect(

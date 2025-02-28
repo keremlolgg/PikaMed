@@ -47,7 +47,7 @@ class WorkoutView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'Next workout',
+                        'Sonraki Çalışma',
                         textAlign: TextAlign.left,
                         style: TextStyle(
                           fontFamily: FitnessAppTheme.fontName,
@@ -60,7 +60,7 @@ class WorkoutView extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: const Text(
-                          'Legs Toning and\nGlutes Workout at Home',
+                          'Evde Bacak Sıkılaştırma ve\nKalça Kasları Egzersizi',
                           textAlign: TextAlign.left,
                           style: TextStyle(
                             fontFamily: FitnessAppTheme.fontName,
@@ -91,7 +91,7 @@ class WorkoutView extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(left: 4.0),
                               child: const Text(
-                                '68 min',
+                                '68 dakika',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontFamily: FitnessAppTheme.fontName,
