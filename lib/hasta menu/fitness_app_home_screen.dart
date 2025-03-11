@@ -31,6 +31,7 @@ class _HastaHomeScreenState extends State<HastaHomeScreen>
         duration: const Duration(milliseconds: 600), vsync: this);
     tabBody = MyDiaryScreen(animationController: animationController);
     super.initState();
+    /*
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showDialog(
         context: context,
@@ -51,6 +52,8 @@ class _HastaHomeScreenState extends State<HastaHomeScreen>
         },
       );
     });
+
+     */
   }
 
   @override

@@ -76,7 +76,7 @@ class RelaxView extends StatelessWidget {
               SlideTransition(
                 position: _relaxAnimation,
                 child: Text(
-                  "baslık2",
+                  "Sizin İçin Neler Sunuyoruz?",
                   style: TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -86,7 +86,7 @@ class RelaxView extends StatelessWidget {
                   padding:
                       EdgeInsets.only(left: 64, right: 64, top: 16, bottom: 16),
                   child: Text(
-                    "metin2",
+                    "İnsülin kullanımınızı kolaylaştıran, yapay zeka destekli rehberlik ve doz takibi sunan bir uygulama.",
                     textAlign: TextAlign.center,
                   ),
                 ),

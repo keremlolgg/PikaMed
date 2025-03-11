@@ -86,7 +86,7 @@ class CareView extends StatelessWidget {
                   child: Container(
                     constraints: BoxConstraints(maxWidth: 350, maxHeight: 250),
                     child: Image.asset(
-                      'assets/introduction_animation/care_image.png',
+                      'assets/introduction_animation/giris1-Photoroom.png',
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -97,7 +97,7 @@ class CareView extends StatelessWidget {
                 child: SlideTransition(
                   position: _relaxSecondHalfAnimation,
                   child: Text(
-                    "baslık3",
+                    "Karma Gerçeklik\nile Öğrenin",
                     style:
                         TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold),
                   ),
@@ -106,7 +106,7 @@ class CareView extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 64, vertical: 16),
                 child: Text(
-                        "metin3",
+                  "AR teknolojisiyle enjeksiyon noktalarını belirleyip insülin uygulamanızı daha güvenli hale getiriyoruz.",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,

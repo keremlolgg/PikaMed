@@ -1,9 +1,9 @@
 import 'package:Marul_Tarlasi/hasta menu/ui_view/body_measurement.dart';
-import 'package:Marul_Tarlasi/hasta menu/ui_view/glass_view.dart';
-import 'package:Marul_Tarlasi/hasta menu/ui_view/mediterranean_diet_view.dart';
 import 'package:Marul_Tarlasi/hasta menu/ui_view/title_view.dart';
 import 'package:Marul_Tarlasi/hasta menu/fitness_app_theme.dart';
-import 'package:Marul_Tarlasi/hasta menu/my_diary/meals_list_view.dart';
+import 'package:Marul_Tarlasi/hasta menu/ui_view/mediterranean_diet_view.dart';
+import 'package:Marul_Tarlasi/hasta menu/my_diary/past_vaccine.dart';
+import 'package:Marul_Tarlasi/hasta menu/my_diary/future_vaccine.dart';
 import 'package:Marul_Tarlasi/hasta menu/my_diary/water_view.dart';
 import 'package:flutter/material.dart';
 
@@ -61,38 +61,17 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
 
     listViews.add(
       TitleView(
-        titleTxt: 'Bugünkü Kalori',
-        subTxt: 'Detaylar',
+        titleTxt: 'Yapılacak Aşıların',
+        subTxt: 'Düzenle',
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController!,
             curve:
-                Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+            Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController!,
       ),
     );
     listViews.add(
-      MediterranesnDietView(
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController!,
-            curve:
-                Interval((1 / count) * 1, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController!,
-      ),
-    );
-    listViews.add(
-      TitleView(
-        titleTxt: 'Bugünkü Aşıların',
-        subTxt: 'Özelleştir',
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController!,
-            curve:
-                Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController!,
-      ),
-    );
-
-    listViews.add(
-      MealsListView(
+      FutureVaccine(
         mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
             CurvedAnimation(
                 parent: widget.animationController!,
@@ -104,8 +83,49 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
 
     listViews.add(
       TitleView(
+        titleTxt: 'Yaptığın Aşılar',
+        subTxt: 'Düzenle',
+        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+            parent: widget.animationController!,
+            curve:
+            Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
+        animationController: widget.animationController!,
+      ),
+    );
+    listViews.add(
+      PastVaccine(
+        mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
+            CurvedAnimation(
+                parent: widget.animationController!,
+                curve: Interval((1 / count) * 3, 1.0,
+                    curve: Curves.fastOutSlowIn))),
+        mainScreenAnimationController: widget.animationController,
+      ),
+    );
+    listViews.add(
+      TitleView(
+        titleTxt: 'Bugünkü Kalori',
+        subTxt: 'Detaylar',
+        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+            parent: widget.animationController!,
+            curve:
+            Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
+        animationController: widget.animationController!,
+      ),
+    );
+    listViews.add(
+      MediterranesnDietView(
+        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+            parent: widget.animationController!,
+            curve:
+            Interval((1 / count) * 1, 1.0, curve: Curves.fastOutSlowIn))),
+        animationController: widget.animationController!,
+      ),
+    );
+    listViews.add(
+      TitleView(
         titleTxt: 'Vücut ölçümü',
-        subTxt: 'Bugün',
+        subTxt: 'Düzenle',
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController!,
             curve:
@@ -126,7 +146,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
     listViews.add(
       TitleView(
         titleTxt: 'Su',
-        subTxt: 'Akıllı Suluk',
+        subTxt: 'Düzenle',
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController!,
             curve:
@@ -144,15 +164,6 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                     curve: Curves.fastOutSlowIn))),
         mainScreenAnimationController: widget.animationController!,
       ),
-    );
-    listViews.add(
-      GlassView(
-          animation: Tween<double>(begin: 0.0, end: 1.0).animate(
-              CurvedAnimation(
-                  parent: widget.animationController!,
-                  curve: Interval((1 / count) * 8, 1.0,
-                      curve: Curves.fastOutSlowIn))),
-          animationController: widget.animationController!),
     );
   }
 

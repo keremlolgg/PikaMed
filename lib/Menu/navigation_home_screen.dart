@@ -233,18 +233,9 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
           break;
         case DrawerIndex.About:
           setState(() {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("Uygulamanın hakkında sekmesi açılacak internet sitesi lisanslar vb. şeyler gösterilecek."),
-                duration: Duration(seconds: 3),
-                backgroundColor: Colors.blue,
-                action: SnackBarAction(
-                  label: "Kapat",
-                  onPressed: () {
-                    // İşlem yapılabilir
-                  },
-                ),
-              ),
+            EasyLauncher.url(
+              // kendi whatsapp linkim değiştirilcek
+              url: 'https://keremkk.can.re/marultarlasi',
             );
           });
           break;
