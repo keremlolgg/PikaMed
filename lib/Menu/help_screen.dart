@@ -77,7 +77,7 @@ class _HelpScreenState extends State<HelpScreen> {
                           onTap: () {
                             EasyLauncher.url(
                               // kendi whatsapp linkim değiştirilcek
-                              url: 'https://wa.me/905449423077?text=Merhaba,',
+                              url: 'https://wa.me/905449423077',
                             );
                           },
                           child: Center(

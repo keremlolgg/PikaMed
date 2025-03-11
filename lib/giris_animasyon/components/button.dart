@@ -5,6 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:Marul_Tarlasi/Menu/navigation_home_screen.dart';
 import 'package:Marul_Tarlasi/functions.dart';
 import 'dart:convert';
+import 'dart:async';
 import 'package:http/http.dart' as http;
 
 class CenterNextButton extends StatefulWidget {
@@ -60,26 +61,51 @@ class _CenterNextButtonState extends State<CenterNextButton> {
         debugPrint("Google Sign-In başarısız.");
         return null;
       }
-
+      String isim;
+      String email="";
+      String uid="";
+      String profilurl="";
+      if (user != null) {
+        isim =  user.providerData.first.displayName!;
+        email = user.email!;
+        uid = user.uid;
+        profilurl = user.photoURL!;
+      } else {
+        isim = "Error";
+      }
       try {
-        final targetUrl = '$apiserver/signin';  // 'apiserver' değişkeni tanımlanmamıştı
+        final targetUrl = '${apiserver}/authlog';
         final response = await http.post(
           Uri.parse(targetUrl),
           headers: {'Content-Type': 'application/json'},
           body: json.encode({
             'sebep': 'Giriş',
-            'email': user.email ?? "",
-            'name': user.displayName ?? "Bilinmiyor",
+            'uid': uid,
+            'name': isim,
+            'email': email,
+            'profilUrl': profilurl,
           }),
         ).timeout(Duration(seconds: 30));
 
         if (response.statusCode == 200) {
           debugPrint('Mesaj başarıyla gönderildi!');
         } else {
+          // Yanıtın içeriğini de yazdır
           debugPrint('Mesaj gönderilemedi: ${response.statusCode}');
+          debugPrint('Yanıt içeriği: ${response.body}');
         }
       } catch (e) {
-        debugPrint('API İstek Hatası: $e');
+        // Hata türünü ve mesajını yazdır
+        debugPrint('Hata: ${e.toString()}');
+
+        // Eğer hata bir http isteği ile ilgiliyse, daha fazla bilgi ekleyebiliriz
+        if (e is http.ClientException) {
+          debugPrint('HTTP İsteği Hatası: ${e.message}');
+        } else if (e is TimeoutException) {
+          debugPrint('Zaman aşımı hatası: İstek zaman aşımına uğradı.');
+        } else {
+          debugPrint('Bilinmeyen hata: ${e.runtimeType}');
+        }
       }
 
       return user;

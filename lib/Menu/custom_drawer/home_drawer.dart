@@ -146,7 +146,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   Padding(
                     padding: const EdgeInsets.only(top: 8, left: 4),
                     child: Text(
-                      _user == null ? 'Lütfen Oturum Açın' : (_user?.displayName ?? 'Kullanıcı'),
+                      _user == null ? 'Lütfen Oturum Açın' : (_user?.providerData.first.displayName! ?? 'Kullanıcı'),
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: isLightMode ? AppTheme.grey : AppTheme.white,
@@ -426,7 +426,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
         content: Text(
           user == null
               ? 'Zaten giriş yapmadınız.'
-              : '"${user.displayName}" adlı hesaptan çıkış yaptınız.',
+              : '"${user.providerData.first.displayName!}" adlı hesaptan çıkış yaptınız.',
         ),
       ),
     );

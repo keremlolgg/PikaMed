@@ -48,7 +48,7 @@ class _GirisAnimasyonScreenState extends State<GirisAnimasyonScreen> with Ticker
             CareView(
               animationController: _animationController!,
             ),
-            MoodDiaryVew(
+            MoodDiaryView(
               animationController: _animationController!,
             ),
             WelcomeView(

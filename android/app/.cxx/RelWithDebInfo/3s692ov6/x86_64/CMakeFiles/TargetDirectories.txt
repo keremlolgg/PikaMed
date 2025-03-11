@@ -1,0 +1,2 @@
+C:/Users/KeremK/. Projeler/StudioProjects/marul_tarlasi/android/app/.cxx/RelWithDebInfo/3s692ov6/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/KeremK/. Projeler/StudioProjects/marul_tarlasi/android/app/.cxx/RelWithDebInfo/3s692ov6/x86_64/CMakeFiles/rebuild_cache.dir

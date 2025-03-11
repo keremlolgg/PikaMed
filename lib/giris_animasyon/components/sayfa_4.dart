@@ -1,73 +1,55 @@
 import 'package:flutter/material.dart';
 
-class MoodDiaryVew extends StatelessWidget {
+class MoodDiaryView extends StatefulWidget {
   final AnimationController animationController;
 
-  const MoodDiaryVew({Key? key, required this.animationController})
+  const MoodDiaryView({Key? key, required this.animationController})
       : super(key: key);
+
+  @override
+  _MoodDiaryViewState createState() => _MoodDiaryViewState();
+}
+
+class _MoodDiaryViewState extends State<MoodDiaryView> {
+  final TextEditingController _boyController = TextEditingController();
+  final TextEditingController _kiloController = TextEditingController();
+
+  void _kaydet() {
+    String boy = _boyController.text;
+    String kilo = _kiloController.text;
+
+    if (boy.isNotEmpty && kilo.isNotEmpty) {
+      print("Boy: $boy cm, Kilo: $kilo kg - Otomatik kaydedildi.");
+      // Burada verileri kaydetmek için ilgili fonksiyonu çağırabilirsin.
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final _firstHalfAnimation =
-        Tween<Offset>(begin: Offset(1, 0), end: Offset(0, 0))
-            .animate(CurvedAnimation(
-      parent: animationController,
-      curve: Interval(
-        0.4,
-        0.6,
-        curve: Curves.fastOutSlowIn,
-      ),
+    Tween<Offset>(begin: Offset(1, 0), end: Offset(0, 0))
+        .animate(CurvedAnimation(
+      parent: widget.animationController,
+      curve: Interval(0.4, 0.6, curve: Curves.fastOutSlowIn),
     ));
     final _secondHalfAnimation =
-        Tween<Offset>(begin: Offset(0, 0), end: Offset(-1, 0))
-            .animate(CurvedAnimation(
-      parent: animationController,
-      curve: Interval(
-        0.6,
-        0.8,
-        curve: Curves.fastOutSlowIn,
-      ),
+    Tween<Offset>(begin: Offset(0, 0), end: Offset(-1, 0))
+        .animate(CurvedAnimation(
+      parent: widget.animationController,
+      curve: Interval(0.6, 0.8, curve: Curves.fastOutSlowIn),
     ));
 
     final _moodFirstHalfAnimation =
-        Tween<Offset>(begin: Offset(2, 0), end: Offset(0, 0))
-            .animate(CurvedAnimation(
-      parent: animationController,
-      curve: Interval(
-        0.4,
-        0.6,
-        curve: Curves.fastOutSlowIn,
-      ),
+    Tween<Offset>(begin: Offset(2, 0), end: Offset(0, 0))
+        .animate(CurvedAnimation(
+      parent: widget.animationController,
+      curve: Interval(0.4, 0.6, curve: Curves.fastOutSlowIn),
     ));
     final _moodSecondHalfAnimation =
-        Tween<Offset>(begin: Offset(0, 0), end: Offset(-2, 0))
-            .animate(CurvedAnimation(
-      parent: animationController,
-      curve: Interval(
-        0.6,
-        0.8,
-        curve: Curves.fastOutSlowIn,
-      ),
-    ));
-    final _imageFirstHalfAnimation =
-        Tween<Offset>(begin: Offset(4, 0), end: Offset(0, 0))
-            .animate(CurvedAnimation(
-      parent: animationController,
-      curve: Interval(
-        0.4,
-        0.6,
-        curve: Curves.fastOutSlowIn,
-      ),
-    ));
-    final _imageSecondHalfAnimation =
-        Tween<Offset>(begin: Offset(0, 0), end: Offset(-4, 0))
-            .animate(CurvedAnimation(
-      parent: animationController,
-      curve: Interval(
-        0.6,
-        0.8,
-        curve: Curves.fastOutSlowIn,
-      ),
+    Tween<Offset>(begin: Offset(0, 0), end: Offset(-2, 0))
+        .animate(CurvedAnimation(
+      parent: widget.animationController,
+      curve: Interval(0.6, 0.8, curve: Curves.fastOutSlowIn),
     ));
 
     return SlideTransition(
@@ -80,7 +62,7 @@ class MoodDiaryVew extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "baslık4",
+                "Kişisel Bilgilerinizi Girin",
                 style: TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold),
               ),
               SlideTransition(
@@ -88,24 +70,39 @@ class MoodDiaryVew extends StatelessWidget {
                 child: SlideTransition(
                   position: _moodSecondHalfAnimation,
                   child: Padding(
-                    padding: EdgeInsets.only(
-                        left: 64, right: 64, top: 16, bottom: 16),
-                    child: Text(
-                      "metin4",
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ),
-              SlideTransition(
-                position: _imageFirstHalfAnimation,
-                child: SlideTransition(
-                  position: _imageSecondHalfAnimation,
-                  child: Container(
-                    constraints: BoxConstraints(maxWidth: 350, maxHeight: 250),
-                    child: Image.asset(
-                      'assets/introduction_animation/mood_dairy_image.png',
-                      fit: BoxFit.contain,
+                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                    child: Column(
+                      children: [
+                        Text(
+                          "Size en uygun insülin hesaplamalarını yapabilmemiz için lütfen aşağıdaki bilgileri doldurun.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        SizedBox(height: 16),
+                        // Boy giriş alanı
+                        TextField(
+                          controller: _boyController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: "Boy (cm)",
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.height),
+                          ),
+                          onChanged: (value) => _kaydet(),
+                        ),
+                        SizedBox(height: 16),
+                        // Kilo giriş alanı
+                        TextField(
+                          controller: _kiloController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: "Kilo (kg)",
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.fitness_center),
+                          ),
+                          onChanged: (value) => _kaydet(),
+                        ),
+                      ],
                     ),
                   ),
                 ),

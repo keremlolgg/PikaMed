@@ -31,26 +31,26 @@ class _SplashViewState extends State<SplashView> {
             SizedBox(
               width: MediaQuery.of(context).size.width,
               child: Image.asset(
-                'assets/introduction_animation/introduction_image.png',
+                'assets/introduction_animation/giris2-Photoroom.png',
                 fit: BoxFit.cover,
               ),
             ),
             Padding(
               padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
               child: Text(
-                "baslık1",
+                  "Diyabet Asistanı: Yapay Zeka Destekli Rehber",
                 style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold),
               ),
             ),
             Padding(
               padding: EdgeInsets.only(left: 64, right: 64),
               child: Text(
-                "metin1",
+                "Bu uygulama, insülin kalemi kullanımını öğrenmeyi kolaylaştırır, doz ve zaman takibi yapar, doktorunuza verilerinizi iletmenize yardımcı olur.",
                 textAlign: TextAlign.center,
               ),
             ),
             SizedBox(
-              height: 48,
+              height: 10,
             ),
             Padding(
               padding: EdgeInsets.only(
