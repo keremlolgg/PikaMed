@@ -18,19 +18,19 @@ dependencies {
 
 android {
     compileSdkVersion 33
-    namespace = "com.kk.marultarlasi"
+    namespace = "com.kk.pikamed"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     signingConfigs {
         debug {
-            storeFile file("C:\\Users\\KeremK\\. Projeler\\StudioProjects\\marul_tarlasi\\ksk.jks")  // Gerçek dosya yolu
+            storeFile file("C:\\Users\\KeremK\\. Projeler\\StudioProjects\\PikaMed\\ksk.jks")  // Gerçek dosya yolu
             storePassword "kerem2008"  // Keystore şifresi
             keyAlias "ksk"  // Keystore'da belirlediğiniz alias
             keyPassword "kerem2008"  // Alias'a ait şifre
         }
         release {
-            storeFile file("C:\\Users\\KeremK\\. Projeler\\StudioProjects\\marul_tarlasi\\ksk.jks")  // Gerçek dosya yolu
+            storeFile file("C:\\Users\\KeremK\\. Projeler\\StudioProjects\\PikaMed\\ksk.jks")  // Gerçek dosya yolu
             storePassword "kerem2008"  // Keystore şifresi
             keyAlias "ksk"  // Keystore'da belirlediğiniz alias
             keyPassword "kerem2008"  // Alias'a ait şifre
@@ -47,7 +47,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.kk.marultarlasi"
+        applicationId "com.kk.pikamed"
         minSdk = 23
         compileSdkVersion 34
         targetSdk = flutter.targetSdkVersion

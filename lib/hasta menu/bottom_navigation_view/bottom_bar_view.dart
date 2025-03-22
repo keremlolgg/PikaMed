@@ -1,7 +1,7 @@
 import 'dart:math' as math;
-import 'package:Marul_Tarlasi/hasta menu/fitness_app_theme.dart';
-import 'package:Marul_Tarlasi/hasta menu/models/tabIcon_data.dart';
-import 'package:Marul_Tarlasi/main.dart';
+import 'package:PikaMed/hasta menu/fitness_app_theme.dart';
+import 'package:PikaMed/hasta menu/models/tabIcon_data.dart';
+import 'package:PikaMed/main.dart';
 import 'package:flutter/material.dart';
 
 

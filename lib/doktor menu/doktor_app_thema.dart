@@ -1,4 +1,4 @@
-import 'package:Marul_Tarlasi/main.dart';
+import 'package:PikaMed/main.dart';
 import 'package:flutter/material.dart';
 
 class HotelAppTheme {

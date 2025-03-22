@@ -1,5 +1,5 @@
-import 'package:Marul_Tarlasi/model/app_theme.dart';
-import 'package:Marul_Tarlasi/Menu/custom_drawer/home_drawer.dart';
+import 'package:PikaMed/model/app_theme.dart';
+import 'package:PikaMed/Menu/custom_drawer/home_drawer.dart';
 import 'package:flutter/material.dart';
 
 
