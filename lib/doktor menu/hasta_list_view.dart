@@ -1,4 +1,4 @@
-import 'package:Marul_Tarlasi/doktor menu/doktor_app_thema.dart';
+import 'package:PikaMed/doktor menu/doktor_app_thema.dart';
 import 'package:flutter/material.dart';
 
 import 'model/hasta_list_data.dart';

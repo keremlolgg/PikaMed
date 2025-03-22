@@ -1,9 +1,11 @@
-import 'package:Marul_Tarlasi/hasta menu/models/tabIcon_data.dart';
-import 'package:Marul_Tarlasi/hasta menu/training/training_screen.dart';
+import 'package:PikaMed/hasta menu/models/tabIcon_data.dart';
+import 'package:PikaMed/hasta menu/training/training_screen.dart';
+import 'package:PikaMed/hasta%20menu/Menu/profile.dart';
+import 'package:PikaMed/hasta%20menu/Menu/water.dart';
 import 'package:flutter/material.dart';
 import 'bottom_navigation_view/bottom_bar_view.dart';
 import 'fitness_app_theme.dart';
-import 'my_diary/my_diary_screen.dart';
+import 'Menu/my_diary_screen.dart';
 
 class HastaHomeScreen extends StatefulWidget {
   @override
@@ -31,29 +33,7 @@ class _HastaHomeScreenState extends State<HastaHomeScreen>
         duration: const Duration(milliseconds: 600), vsync: this);
     tabBody = MyDiaryScreen(animationController: animationController);
     super.initState();
-    /*
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Uyarı'),
-            content: Text('Bu sayfa düzelecek bu sadece bir demo.'),
-            actions: <Widget>[
-              TextButton(
-                child: Text('Tamam'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    });
 
-     */
   }
 
   @override
@@ -102,7 +82,7 @@ class _HastaHomeScreenState extends State<HastaHomeScreen>
           tabIconsList: tabIconsList,
           addClick: () {},
           changeIndex: (int index) {
-            if (index == 0 || index == 2) {
+            if (index == 0) {
               animationController?.reverse().then<dynamic>((data) {
                 if (!mounted) {
                   return;
@@ -112,14 +92,24 @@ class _HastaHomeScreenState extends State<HastaHomeScreen>
                       MyDiaryScreen(animationController: animationController);
                 });
               });
-            } else if (index == 1 || index == 3) {
+            } else if (index == 1) {
               animationController?.reverse().then<dynamic>((data) {
                 if (!mounted) {
                   return;
                 }
                 setState(() {
                   tabBody =
-                      TrainingScreen(animationController: animationController);
+                      waterScreen(animationController: animationController);
+                });
+              });
+            }  else if (index == 3) {
+              animationController?.reverse().then<dynamic>((data) {
+                if (!mounted) {
+                  return;
+                }
+                setState(() {
+                  tabBody =
+                      profileScreen(animationController: animationController);
                 });
               });
             }

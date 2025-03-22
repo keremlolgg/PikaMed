@@ -6,7 +6,7 @@
     <application
         android:name="${applicationName}"
         android:enableOnBackInvokedCallback="true"
-        android:label="Marul Tarlası"
+        android:label="PikaMed"
         android:icon="@mipmap/ic_launcher">
 
         <!-- Ana aktivite -->

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:PikaMed/functions.dart';
 class MoodDiaryView extends StatefulWidget {
   final AnimationController animationController;
 
@@ -15,12 +15,11 @@ class _MoodDiaryViewState extends State<MoodDiaryView> {
   final TextEditingController _kiloController = TextEditingController();
 
   void _kaydet() {
-    String boy = _boyController.text;
-    String kilo = _kiloController.text;
-
-    if (boy.isNotEmpty && kilo.isNotEmpty) {
-      print("Boy: $boy cm, Kilo: $kilo kg - Otomatik kaydedildi.");
-      // Burada verileri kaydetmek için ilgili fonksiyonu çağırabilirsin.
+    size = int.parse(_boyController.text);
+    weight = int.parse(_kiloController.text);
+    if (size > 0 && weight > 0) {
+      debugPrint("Boy: $size cm, Kilo: $weight kg - Otomatik kaydedildi.");
+      writeToFile();
     }
   }
 

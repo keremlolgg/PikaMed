@@ -1,21 +1,22 @@
-import 'package:Marul_Tarlasi/model/app_theme.dart';
-import 'package:Marul_Tarlasi/Menu/custom_drawer/drawer_user_controller.dart';
-import 'package:Marul_Tarlasi/Menu/custom_drawer/home_drawer.dart';
-import 'package:Marul_Tarlasi/Menu/feedback_screen.dart';
-import 'package:Marul_Tarlasi/Menu/help_screen.dart';
-import 'package:Marul_Tarlasi/Menu/invite_friend_screen.dart';
+import 'package:PikaMed/model/app_theme.dart';
+import 'package:PikaMed/Menu/custom_drawer/drawer_user_controller.dart';
+import 'package:PikaMed/Menu/custom_drawer/home_drawer.dart';
+import 'package:PikaMed/Menu/feedback_screen.dart';
+import 'package:PikaMed/Menu/help_screen.dart';
+import 'package:PikaMed/Menu/invite_friend_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
-import 'package:Marul_Tarlasi/hasta menu/fitness_app_home_screen.dart';
-import 'package:Marul_Tarlasi/doktor menu/doktor_home_screen.dart';
-import 'package:Marul_Tarlasi/giris_animasyon/introduction_animation_screen.dart';
+import 'package:PikaMed/hasta menu/fitness_app_home_screen.dart';
+import 'package:PikaMed/doktor menu/doktor_home_screen.dart';
+import 'package:PikaMed/giris_animasyon/introduction_animation_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'dart:convert';
 import 'package:easy_url_launcher/easy_url_launcher.dart';
-import 'package:Marul_Tarlasi/functions.dart';
+import 'package:PikaMed/functions.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:PikaMed/hasta menu/models/InsulinDose.dart';
 
 class NavigationHomeScreen extends StatefulWidget {
   @override
@@ -69,8 +70,8 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
       });
     }
     surumkiyasla();
+    starting();
   }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -94,6 +95,16 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
       ),
     );
   }
+  void starting()async {
+    await readFromFile((update) => setState(update));
+    InsulinListData.updateDoseLists();
+    if(channelId.isEmpty){
+      channelId= await getChannelId();
+      writeToFile();
+    }
+    postInfo();
+  }
+
   Future<void> _requestNotificationPermission() async {
     if (await Permission.notification.isDenied) {
       Permission.notification.request();
@@ -108,7 +119,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
     Future<void> _fetchData() async {
       try {
         final response = await http.get(Uri.parse(
-            'https://raw.githubusercontent.com/keremlolgg/marul-tarlasi/main/latest_version.json'));
+            'https://raw.githubusercontent.com/keremlolgg/keremlolgg/main/PikaMed.json'));
         if (response.statusCode == 200) {
           final data = json.decode(response.body);
 
@@ -186,7 +197,10 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
           bool isDoctorUser = await isDoctor();
           if (isDoctorUser) {
             setState(() {
-              screenView = DoktorHomeScreen();
+              EasyLauncher.url(
+                // kendi whatsapp linkim değiştirilcek
+                url: 'https://keremkk.can.re/doktor',
+              );
             });
           } else {
             ScaffoldMessenger.of(context).removeCurrentSnackBar();
@@ -234,8 +248,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
         case DrawerIndex.About:
           setState(() {
             EasyLauncher.url(
-              // kendi whatsapp linkim değiştirilcek
-              url: 'https://keremkk.can.re/marultarlasi',
+              url: 'https://keremkk.can.re/pikamed',
             );
           });
           break;

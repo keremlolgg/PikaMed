@@ -1,6 +1,6 @@
-import 'package:Marul_Tarlasi/hasta menu/fitness_app_theme.dart';
-import 'package:Marul_Tarlasi/hasta menu/models/past_list_data.dart';
-import 'package:Marul_Tarlasi/main.dart';
+import 'package:PikaMed/hasta menu/fitness_app_theme.dart';
+import 'package:PikaMed/hasta menu/models/InsulinDose.dart';
+import 'package:PikaMed/main.dart';
 import 'package:flutter/material.dart';
 
 class PastVaccine extends StatefulWidget {
@@ -18,7 +18,7 @@ class PastVaccine extends StatefulWidget {
 class _PastVaccineState extends State<PastVaccine>
     with TickerProviderStateMixin {
   AnimationController? animationController;
-  List<PastInsulinListData> mealsListData = PastInsulinListData.insulinList;
+  List<InsulinListData> mealsListData = InsulinListData.pastInsulinList;
 
   @override
   void initState() {
@@ -87,7 +87,7 @@ class MealsView extends StatelessWidget {
       {Key? key, this.insulinList, this.animationController, this.animation})
       : super(key: key);
 
-  final PastInsulinListData? insulinList;
+  final InsulinListData? insulinList;
   final AnimationController? animationController;
   final Animation<double>? animation;
 
@@ -186,7 +186,7 @@ class MealsView extends StatelessWidget {
                     child: SizedBox(
                       width: 80,
                       height: 80,
-                      child: Image.asset(insulinList!.imagePath),
+                      child: Image.asset('assets/fitness_app/insulin.png'),
                     ),
                   )
                 ],

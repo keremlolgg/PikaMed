@@ -2,8 +2,8 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:Marul_Tarlasi/Menu/navigation_home_screen.dart';
-import 'package:Marul_Tarlasi/functions.dart';
+import 'package:PikaMed/Menu/navigation_home_screen.dart';
+import 'package:PikaMed/functions.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:http/http.dart' as http;
@@ -27,7 +27,6 @@ class _CenterNextButtonState extends State<CenterNextButton> {
   Future<void> onTapped(BuildContext context) async {
     final _auth = firebase_auth.FirebaseAuth.instance;
     firebase_auth.User? user = await googleSignIn(_auth);
-
     if (user != null) {
       debugPrint('Google ile giriş başarılı: ${user.displayName}');
 
@@ -39,7 +38,6 @@ class _CenterNextButtonState extends State<CenterNextButton> {
       debugPrint('Google ile giriş başarısız.');
     }
   }
-
   Future<firebase_auth.User?> googleSignIn(firebase_auth.FirebaseAuth _auth) async {
     try {
       await GoogleSignIn().signOut();
@@ -61,18 +59,11 @@ class _CenterNextButtonState extends State<CenterNextButton> {
         debugPrint("Google Sign-In başarısız.");
         return null;
       }
-      String isim;
-      String email="";
-      String uid="";
-      String profilurl="";
-      if (user != null) {
-        isim =  user.providerData.first.displayName!;
-        email = user.email!;
-        uid = user.uid;
-        profilurl = user.photoURL!;
-      } else {
-        isim = "Error";
-      }
+      String isim =  user.providerData.first.displayName!;
+      String email = user.email!;
+      String uid = user.uid;
+      String profilurl = user.photoURL!;
+
       try {
         final targetUrl = '${apiserver}/authlog';
         final response = await http.post(

@@ -1,4 +1,4 @@
-import 'package:Marul_Tarlasi/model/app_theme.dart';
+import 'package:PikaMed/model/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 

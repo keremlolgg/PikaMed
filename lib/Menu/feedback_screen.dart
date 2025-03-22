@@ -1,6 +1,6 @@
-import 'package:Marul_Tarlasi/model/app_theme.dart';
+import 'package:PikaMed/model/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:Marul_Tarlasi/functions.dart';
+import 'package:PikaMed/functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 class FeedbackScreen extends StatefulWidget {

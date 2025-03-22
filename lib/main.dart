@@ -1,14 +1,17 @@
 import 'dart:io';
-import 'package:Marul_Tarlasi/model/app_theme.dart';
+import 'package:PikaMed/model/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'Menu/navigation_home_screen.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show PlatformDispatcher, kIsWeb;
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'functions.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Locale deviceLocale = PlatformDispatcher.instance.locale;
+  localLanguage = deviceLocale.languageCode;
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,

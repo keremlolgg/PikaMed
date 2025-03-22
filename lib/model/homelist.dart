@@ -1,6 +1,6 @@
-import 'package:Marul_Tarlasi/hasta menu/fitness_app_home_screen.dart';
-import 'package:Marul_Tarlasi/doktor menu/doktor_home_screen.dart';
-import 'package:Marul_Tarlasi/giris_animasyon/introduction_animation_screen.dart';
+import 'package:PikaMed/hasta menu/fitness_app_home_screen.dart';
+import 'package:PikaMed/doktor menu/doktor_home_screen.dart';
+import 'package:PikaMed/giris_animasyon/introduction_animation_screen.dart';
 import 'package:flutter/widgets.dart';
 
 class HomeList {

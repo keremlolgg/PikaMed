@@ -1,10 +1,10 @@
-import 'package:Marul_Tarlasi/giris_animasyon/components/sayfa_3.dart';
-import 'package:Marul_Tarlasi/giris_animasyon/components/button.dart';
-import 'package:Marul_Tarlasi/giris_animasyon/components/sayfa_4.dart';
-import 'package:Marul_Tarlasi/giris_animasyon/components/sayfa_2.dart';
-import 'package:Marul_Tarlasi/giris_animasyon/components/sayfa_1.dart';
-import 'package:Marul_Tarlasi/giris_animasyon/components/geritus.dart';
-import 'package:Marul_Tarlasi/giris_animasyon/components/sayfa_giris.dart';
+import 'package:PikaMed/giris_animasyon/components/sayfa_3.dart';
+import 'package:PikaMed/giris_animasyon/components/button.dart';
+import 'package:PikaMed/giris_animasyon/components/sayfa_4.dart';
+import 'package:PikaMed/giris_animasyon/components/sayfa_2.dart';
+import 'package:PikaMed/giris_animasyon/components/sayfa_1.dart';
+import 'package:PikaMed/giris_animasyon/components/geritus.dart';
+import 'package:PikaMed/giris_animasyon/components/sayfa_giris.dart';
 import 'package:flutter/material.dart';
 
 class GirisAnimasyonScreen extends StatefulWidget {
@@ -110,6 +110,5 @@ class _GirisAnimasyonScreenState extends State<GirisAnimasyonScreen> with Ticker
   }
 
   void _signUpClick() {
-    Navigator.pop(context);
   }
 }

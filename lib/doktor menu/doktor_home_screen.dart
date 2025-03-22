@@ -1,5 +1,5 @@
-import 'package:Marul_Tarlasi/doktor menu/hasta_list_view.dart';
-import 'package:Marul_Tarlasi/doktor menu/model/hasta_list_data.dart';
+import 'package:PikaMed/doktor menu/hasta_list_view.dart';
+import 'package:PikaMed/doktor menu/model/hasta_list_data.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'filters_screen.dart';
