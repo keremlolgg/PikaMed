@@ -1,0 +1,2 @@
+C:/Users/KeremK/. Projeler/StudioProjects/PikaMed/android/app/.cxx/RelWithDebInfo/6yw6si4z/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/KeremK/. Projeler/StudioProjects/PikaMed/android/app/.cxx/RelWithDebInfo/6yw6si4z/x86_64/CMakeFiles/rebuild_cache.dir

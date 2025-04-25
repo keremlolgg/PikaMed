@@ -7,9 +7,9 @@ import 'package:PikaMed/Menu/invite_friend_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:PikaMed/hasta menu/fitness_app_home_screen.dart';
-import 'package:PikaMed/doktor menu/doktor_home_screen.dart';
 import 'package:PikaMed/giris_animasyon/introduction_animation_screen.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'dart:convert';
 import 'package:easy_url_launcher/easy_url_launcher.dart';
@@ -17,6 +17,7 @@ import 'package:PikaMed/functions.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:PikaMed/hasta menu/models/InsulinDose.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class NavigationHomeScreen extends StatefulWidget {
   @override
@@ -69,7 +70,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
         screenView = HastaHomeScreen();
       });
     }
-    surumkiyasla();
+    surumkiyasla(context);
     starting();
   }
   @override
@@ -96,86 +97,102 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
     );
   }
   void starting()async {
+    await initializeDateFormatting('tr_TR', null);
     await readFromFile((update) => setState(update));
     InsulinListData.updateDoseLists();
-    if(channelId.isEmpty){
+    if(channelId.isEmpty)
       channelId= await getChannelId();
-      writeToFile();
+    bmi = weight / ((size / 100) * (size / 100));
+    if (bmi < 18.5) {
+      bmiCategory = 'Zayıf';
+    } else if (bmi >= 18.5 && bmi < 24.9) {
+      bmiCategory = 'Normal';
+    } else if (bmi >= 25 && bmi < 29.9) {
+      bmiCategory = 'Fazla Kilolu';
+    } else {
+      bmiCategory = 'Obez';
     }
+    String today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    if (changeWaterDay == null || changeWaterDay != today) {
+      changeWaterDay = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      debugPrint("Yeni gün tespit edildi! Veriler sıfırlandı.");
+      availableWater=0;
+      changeWaterClock = DateFormat('EEEE,  ', 'tr_TR').format(DateTime.now());
+      changeWaterClock +='00:00';
+    } else {
+      debugPrint("Bugün zaten kaydedilmiş: $today");
+    }
+    writeToFile();
     postInfo();
   }
-
   Future<void> _requestNotificationPermission() async {
     if (await Permission.notification.isDenied) {
       Permission.notification.request();
     }
   }
-  Future<void> surumkiyasla() async {
+  Future<void> surumkiyasla(BuildContext context) async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String localVersion = packageInfo.version;
     String? remoteVersion;
     String? apkUrl;
+    String? updateNotes;
+    bool isUpdateMandatory = false;
 
-    Future<void> _fetchData() async {
-      try {
-        final response = await http.get(Uri.parse(
-            'https://raw.githubusercontent.com/keremlolgg/keremlolgg/main/PikaMed.json'));
-        if (response.statusCode == 200) {
-          final data = json.decode(response.body);
+    try {
+      final response = await http.get(Uri.parse(
+          'https://raw.githubusercontent.com/keremlolgg/keremlolgg/main/PikaMed.json'));
 
-          // Null kontrolü ve verinin geçerliliği
-          if (data != null && data.containsKey('latest_version') && data.containsKey('apk_url') && data.containsKey('apiserver')) {
-            setState(() {
-              remoteVersion = data['latest_version'] ?? 'N/A';
-              apkUrl = data['apk_url'] ?? 'N/A';
-              apiserver = data['apiserver'] ?? 'N/A';
-            });
-          } else {
-            throw Exception('Missing keys in the JSON data');
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        if (data != null &&
+            data.containsKey('latest_version') &&
+            data.containsKey('apk_url') &&
+            data.containsKey('apiserver') &&
+            data.containsKey('update_notes')) {
+
+          remoteVersion = data['latest_version'] ?? 'N/A';
+          apkUrl = data['apk_url'] ?? 'N/A';
+          updateNotes = data['update_notes'] ?? 'Yama notları bulunamadı';
+
+          if (remoteVersion != localVersion && apkUrl != 'N/A') {
+            showDialog(
+              context: context,
+              barrierDismissible: !isUpdateMandatory,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Yeni Sürüm Var'),
+                  content: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('Mevcut Sürüm: $localVersion'),
+                      Text('Yeni Sürüm: $remoteVersion'),
+                      SizedBox(height: 10),
+                      Text('Yama Notları:'),
+                      Text(updateNotes ?? 'Yama notları mevcut değil'),
+                    ],
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('Güncelle'),
+                      onPressed: () {
+                        EasyLauncher.url(url: apkUrl!);
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
           }
         } else {
-          throw Exception('Failed to load data');
+          throw Exception('JSON verisinde eksik anahtarlar var');
         }
-      } catch (e) {
-        debugPrint('Error: $e');
+      } else {
+        throw Exception('Veri alınamadı. HTTP Hatası: ${response.statusCode}');
       }
-    }
-
-    await _fetchData();
-    void showUpdateDialog(BuildContext context) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Yeni Sürüm Var'),
-            content: Text('Lütfen internet sitesinden uygulamayı tekrar indirerek güncelleyiniz.'),
-            actions: <Widget>[
-              TextButton(
-                child: Text('Şimdi Değil'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                child: Text('Siteye Git'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  EasyLauncher.url(
-                    url: apkUrl!,
-                  );
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
-
-    if (remoteVersion != null &&
-        apkUrl != null &&
-        remoteVersion != localVersion) {
-      showUpdateDialog(context);
+    } catch (e) {
+      debugPrint('Hata: $e');
     }
   }
 

@@ -7,11 +7,14 @@ import 'package:flutter/foundation.dart' show PlatformDispatcher, kIsWeb;
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'functions.dart';
+import 'dart:async';
+import 'package:flutter_background/flutter_background.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Locale deviceLocale = PlatformDispatcher.instance.locale;
   localLanguage = deviceLocale.languageCode;
+
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -19,12 +22,27 @@ void main() async {
   } catch (e) {
     debugPrint('Firebase initialization error: $e');
   }
+
+  enableBackgroundExecution();
   await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
   ]).then((_) => runApp(MyApp()));
 }
 
+Future<void> enableBackgroundExecution() async {
+  const androidConfig = FlutterBackgroundAndroidConfig(
+    notificationTitle: "Arka Planda Çalışıyor",
+    notificationText: "Doz Takip Aktif.",
+    notificationImportance: AndroidNotificationImportance.normal,
+    enableWifiLock: true,
+  );
+
+  bool hasPermission = await FlutterBackground.initialize(androidConfig: androidConfig);
+  if (hasPermission) {
+    FlutterBackground.enableBackgroundExecution();
+  }
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -63,3 +81,8 @@ class HexColor extends Color {
     return int.parse(hexColor, radix: 16);
   }
 }
+/*
+flutter build apk
+xcopy /Y /I "build\app\outputs\flutter-apk\app-release.apk" "C:\Users\Kerem\Desktop\PikaMed.apk"
+
+ */

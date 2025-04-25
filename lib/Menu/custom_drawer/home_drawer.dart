@@ -7,6 +7,8 @@ import 'package:PikaMed/functions.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../navigation_home_screen.dart';
+
 class HomeDrawer extends StatefulWidget {
   const HomeDrawer(
       {Key? key,
@@ -213,7 +215,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
       try {
         final user = await this.googleSignIn();
 
-        // Kullanıcı null ise işlemi durdur
         if (user == null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Google oturum açma başarısız!")),
@@ -355,18 +356,15 @@ class _HomeDrawerState extends State<HomeDrawer> {
         idToken: googleAuth.idToken,
       );
       final user = (await _auth.signInWithCredential(credential)).user;
-      String isim;
-      String email="";
-      String uid="";
-      String profilurl="";
       if (user != null) {
-        isim =  user.providerData.first.displayName!;
-        email = user.email!;
+        name=  user.providerData.first.displayName!;
         uid = user.uid;
-        profilurl = user.photoURL!;
+        photoURL = user.photoURL!;
       } else {
-        isim = "Error";
+        name = "Error";
       }
+      await fetchUserData((update) => setState(update));
+      writeToFile();
       try {
         final targetUrl = '${apiserver}/authlog';
         final response = await http.post(
@@ -375,9 +373,8 @@ class _HomeDrawerState extends State<HomeDrawer> {
           body: json.encode({
             'sebep': 'Giriş',
             'uid': uid,
-            'name': isim,
-            'email': email,
-            'profilUrl': profilurl,
+            'name': name,
+            'profilUrl': photoURL,
           }),
         ).timeout(Duration(seconds: 30));
 
@@ -409,17 +406,12 @@ class _HomeDrawerState extends State<HomeDrawer> {
   }
   Future<void> signOut() async {
     final user = _auth.currentUser;
-    String isim;
-    String email="";
-    String uid="";
-    String profilurl="";
     if (user != null) {
-      isim = user.providerData.first.displayName!;
-      email = user.email!;
+      name = user.providerData.first.displayName!;
       uid = user.uid;
-      profilurl = user.photoURL!;
+      photoURL = user.photoURL!;
     } else {
-      isim = "Error";
+      name = "Error";
     }
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -431,15 +423,16 @@ class _HomeDrawerState extends State<HomeDrawer> {
       ),
     );
     _auth.signOut();
+    await resetAllData((update) => setState(update));
+    writeToFile();
     setState(() => this._user = null);
     try {
       final targetUrl = '${apiserver}/authlog';
       final requestBody = {
         'sebep': "Çıkış",
-        'email': email,
-        'name': isim,
+        'name': name,
         'uid': uid,
-        'profilUrl': profilurl,
+        'profilUrl': photoURL,
       };
 
       debugPrint('Çıkış isteği API\'ye gönderiliyor: $targetUrl');
@@ -465,8 +458,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
       debugPrint('Hata: $e');
       debugPrint('StackTrace: $stackTrace');
     }
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
+    );
   }
-
 }
 
 enum DrawerIndex {

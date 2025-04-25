@@ -29,7 +29,8 @@ class _CenterNextButtonState extends State<CenterNextButton> {
     firebase_auth.User? user = await googleSignIn(_auth);
     if (user != null) {
       debugPrint('Google ile giriş başarılı: ${user.displayName}');
-
+      await fetchUserData((update) => setState(update));
+      writeToFile();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => NavigationHomeScreen()),

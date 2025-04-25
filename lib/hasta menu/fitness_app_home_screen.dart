@@ -1,5 +1,4 @@
 import 'package:PikaMed/hasta menu/models/tabIcon_data.dart';
-import 'package:PikaMed/hasta menu/training/training_screen.dart';
 import 'package:PikaMed/hasta%20menu/Menu/profile.dart';
 import 'package:PikaMed/hasta%20menu/Menu/water.dart';
 import 'package:flutter/material.dart';

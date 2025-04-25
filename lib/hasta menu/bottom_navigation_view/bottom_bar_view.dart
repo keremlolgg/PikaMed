@@ -4,6 +4,8 @@ import 'package:PikaMed/hasta menu/models/tabIcon_data.dart';
 import 'package:PikaMed/main.dart';
 import 'package:flutter/material.dart';
 
+import '../chat_page.dart';
+
 
 class BottomBarView extends StatefulWidget {
   const BottomBarView(
@@ -163,9 +165,11 @@ class _BottomBarViewState extends State<BottomBarView>
                           splashColor: Colors.white.withOpacity(0.1),
                           highlightColor: Colors.transparent,
                           focusColor: Colors.transparent,
-                          onTap: widget.addClick,
+                          onTap: () {
+                            ChatPage.show(context);
+                          },
                           child: Icon(
-                            Icons.add,
+                            Icons.smart_toy,
                             color: FitnessAppTheme.white,
                             size: 32,
                           ),

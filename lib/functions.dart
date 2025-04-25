@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -64,12 +65,12 @@ bool isEnglish=false;
 final List<String> diller = ['Türkçe','English'];
 String localLanguage = '';
 
-int targetWater=3500, availableWater=0,cupSize=100;
-String changeWaterClock= "";
+int targetWater=3500, availableWater=0 ,cupSize=200;
+String changeWaterClock= "", changeWaterDay="";
 
 int weight=0, size=0;
 String changeWeightClock= "", bmiCategory="";
-double bmi=0;
+double bmi=0.0;
 
 Future<void> readFromFile(Function updateState) async {
   final directory = await getApplicationDocumentsDirectory();
@@ -85,17 +86,17 @@ Future<void> readFromFile(Function updateState) async {
       uid = jsonData['uid'] ?? '';
       channelId = jsonData['channelId'] ?? '';
       photoURL = jsonData['photoURL'] ?? 'https://cdn.glitch.global/e74d89f5-045d-4ad2-94c7-e2c99ed95318/2815428.png?v=1738114346363';
-      channelId = jsonData['channelId'] ?? '';
       selectedLanguage = jsonData['selectedLanguage'] ?? 'Türkçe';
       targetWater = jsonData['targetWater'] ?? 3500;
       availableWater = jsonData['availableWater'] ?? 0;
-      cupSize = jsonData['cupSize'] ?? 100;
+      cupSize = jsonData['cupSize'] ?? 200;
       weight = jsonData['weight'] ?? 0;
       size = jsonData['size'] ?? 0;
-      changeWeightClock= jsonData['changeWeightClock'] ?? "00:00";
+      changeWeightClock= jsonData['changeWeightClock'] ?? "";
       bmiCategory= jsonData['bmiCategory'] ?? "";
-      bmi= jsonData['bmi'] ?? "";
-      changeWaterClock = jsonData['changeWaterClock'] ?? '00:00';
+      bmi= jsonData['bmi'] ?? 0.0;
+      changeWaterClock = jsonData['changeWaterClock'] ?? '';
+      changeWaterDay = jsonData['changeWaterDay'] ?? '';
       InsulinListData.insulinList = (jsonData['futureInsulinList'] as List<dynamic>?)
           ?.map((e) => InsulinListData.fromJson(e))
           .toList() ?? [];
@@ -117,11 +118,11 @@ Future<void> writeToFile() async {
     'channelId': channelId,
     'uid': uid,
     'photoURL': photoURL,
-    'channelId': channelId,
     'selectedLanguage': selectedLanguage,
     'targetWater': targetWater,
-    'avaibleWater': availableWater,
+    'availableWater': availableWater,
     'changeWaterClock': changeWaterClock,
+    'changeWaterDay': changeWaterDay,
     'cupSize': cupSize,
     'weight': weight,
     'size': size,
@@ -135,6 +136,71 @@ Future<void> writeToFile() async {
   await file.writeAsString(jsonData);
   print("dosyaya yazıldı");
 }
+Future<void> fetchUserData(Function updateState) async {
+  if(channelId.isEmpty)
+    channelId= await getChannelId();
+  final response = await http.get(
+    Uri.parse('$apiserver/json/$channelId'), // API URL'sini buraya ekleyin
+  );
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> data = json.decode(response.body);
+
+    // Veriyi state'e işleme
+    updateState(() {
+      name = data['name'];
+      uid = data['uid'];
+      photoURL = data['photoURL'];
+      selectedLanguage = data['selectedLanguage'];
+      targetWater = data['targetWater'];
+      availableWater = data['availableWater'];
+      cupSize = data['cupSize'];
+      changeWaterClock = data['changeWaterClock'];
+      changeWaterDay = data['changeWaterDay'];
+      size = data['size'];
+      weight = data['weight'];
+      changeWeightClock = data['changeWeightClock'];
+      bmiCategory = data['bmiCategory'];
+      bmi = data['bmi'];
+      InsulinListData.insulinList = (data['futureInsulinList'] as List<dynamic>?)
+          ?.map((e) => InsulinListData.fromJson(e))
+          .toList() ?? [];
+    });
+
+    debugPrint("Veri başarıyla alındı");
+  } else {
+    // Hata durumu
+    print("API isteği başarısız: ${response.statusCode}");
+  }
+}
+Future<void> resetAllData(Function updateState) async {
+  // Burada sıfırlama işlemi yapılıyor
+  updateState(() {
+    name = "";
+    photoURL = "https://cdn.glitch.global/e74d89f5-045d-4ad2-94c7-e2c99ed95318/2815428.png?v=1738114346363";
+    uid = '';
+    channelId = '';
+    selectedLanguage = '';
+    isEnglish = false;
+    localLanguage = '';
+
+    targetWater = 3500;
+    availableWater = 0;
+    cupSize = 200;
+    changeWaterClock = "";
+    changeWaterDay = "";
+
+    weight = 0;
+    size = 0;
+    changeWeightClock = "";
+    bmiCategory = "";
+    bmi = 0.0;
+    InsulinListData.insulinList = [];
+  });
+
+  debugPrint("Veriler sıfırlandı.");
+}
+
 
 Future<void> postInfo() async {
   final user = FirebaseAuth.instance.currentUser;
@@ -157,8 +223,9 @@ Future<void> postInfo() async {
       'channelId': channelId,
       'selectedLanguage': selectedLanguage,
       'targetWater': targetWater,
-      'avaibleWater': availableWater,
+      'availableWater': availableWater,
       'changeWaterClock': changeWaterClock,
+      'changeWaterDay': changeWaterDay,
       'cupSize': cupSize,
       'weight': weight,
       'size': size,
@@ -184,6 +251,46 @@ Future<void> postInfo() async {
     debugPrint('❌ Hata: $e');
   }
 }
+Future<String> askAi(String message) async {
+  try {
+    final targetUrl = '$apiserver/ai';
+    final response = await http.post(
+      Uri.parse(targetUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'uid': uid,
+        'message': message,
+        'targetWater': targetWater,
+        'availableWater': availableWater,
+        'cupSize': cupSize,
+        'changeWaterDay': changeWaterDay,
+        'changeWaterClock': changeWaterClock,
+        'weight': weight,
+        'size': size,
+        'bmi': bmi,
+        'bmiCategory': bmiCategory,
+        'name': name,
+        'selectedLanguage': selectedLanguage,
+        'localTime': DateFormat('EEEE,  HH:mm', 'tr_TR').format(DateTime.now()),
+        'insulinPlan': InsulinListData.insulinList.map((e) => e.toJson()).toList(),
+      }),
+    ).timeout(Duration(seconds: 30));
+
+    if (response.statusCode == 200) {
+      debugPrint('Mesaj başarıyla gönderildi!');
+      final responseBody = json.decode(response.body);
+      return responseBody['aiResponse'];
+    } else {
+      debugPrint('Mesaj gönderilemedi: ${response.statusCode}');
+      return 'Mesaj gönderilemedi.';
+    }
+  } catch (e) {
+    debugPrint('Hata: $e');
+    return 'Bir hata oluştu.';
+  }
+}
+
+
 Future<void> postmessage(String message, String neden, String api, String? isim, String? eposta, String? uid) async {
   try {
     final targetUrl = '$apiserver/$api';

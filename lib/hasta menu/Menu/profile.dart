@@ -120,7 +120,7 @@ class _profileScreenState extends State<profileScreen>
                 setState(() {
                   weight = int.tryParse(weightController.text)!;
                   size = int.tryParse(sizeController.text)!;
-                  changeWeightClock = DateFormat('HH:mm').format(DateTime.now());
+                  changeWeightClock = DateFormat('EEEE, MMMM d - HH:mm', 'tr_TR').format(DateTime.now());
                   writeToFile();
                 });
                 print("Yeni Ağırlık: $weight kg");

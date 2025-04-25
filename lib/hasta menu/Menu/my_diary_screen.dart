@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:PikaMed/hasta menu/models/InsulinDose.dart';
 import 'package:PikaMed/functions.dart';
 
+import '../../Menu/navigation_home_screen.dart';
+
 class MyDiaryScreen extends StatefulWidget {
   const MyDiaryScreen({Key? key, this.animationController}) : super(key: key);
 
@@ -74,17 +76,6 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
         pastDoses.add(dose);
       } else {
         futureDoses.add(dose);
-      }
-    }
-
-    void pickTime() async {
-      final TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: selectedTime,
-      );
-
-      if (pickedTime != null) {
-        selectedTime = pickedTime;
       }
     }
 
@@ -175,6 +166,10 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text("İnsülin dozu silindi!")),
                               );
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
+                              );
                             },
                           ),
                         );
@@ -212,6 +207,10 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                       Navigator.of(context).pop();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Yeni insülin dozu eklendi!")),
+                      );
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
                       );
                     }
                   },

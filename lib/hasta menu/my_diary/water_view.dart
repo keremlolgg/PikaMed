@@ -21,19 +21,19 @@ class _WaterViewState extends State<WaterView> {
 
   void increaseWater() {
     setState(() {
-      availableWater += cupSize; // 250 ml artır
-      changeWaterClock = DateFormat('HH:mm').format(DateTime.now()); // Saati güncelle
+      availableWater += cupSize;
+      changeWaterClock = DateFormat('EEEE, HH:mm', 'tr_TR').format(DateTime.now()); // Saati güncelle
       writeToFile();
     });
   }
 
   void decreaseWater() {
     setState(() {
-        availableWater -= cupSize; // 250 ml azalt
+        availableWater -= cupSize;
         if (availableWater<0) {
           availableWater=0;
         }
-        changeWaterClock = DateFormat('HH:mm').format(DateTime.now()); // Saati güncelleü
+        changeWaterClock = DateFormat('EEEE,  HH:mm', 'tr_TR').format(DateTime.now());
         writeToFile();
     });
   }
@@ -144,7 +144,7 @@ class _WaterViewState extends State<WaterView> {
                                   Padding(
                                     padding: const EdgeInsets.only(left: 4.0),
                                     child: Text(
-                                      'Son içecek $changeWaterClock',
+                                      '$changeWaterClock',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontFamily: FitnessAppTheme.fontName,
