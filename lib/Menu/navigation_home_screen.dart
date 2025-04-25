@@ -140,7 +140,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
 
     try {
       final response = await http.get(Uri.parse(
-          'https://raw.githubusercontent.com/keremlolgg/keremlolgg/main/PikaMed.json'));
+          'https://raw.githubusercontent.com/keremlolgg/PikaMed/main/PikaMed.json'));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -216,7 +216,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
             setState(() {
               EasyLauncher.url(
                 // kendi whatsapp linkim değiştirilcek
-                url: 'https://keremkk.can.re/doktor',
+                url: 'https://keremkk.glitch.me/doktor',
               );
             });
           } else {
@@ -265,7 +265,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
         case DrawerIndex.About:
           setState(() {
             EasyLauncher.url(
-              url: 'https://keremkk.can.re/pikamed',
+              url: 'https://keremkk.vercel.app/pikamed',
             );
           });
           break;
