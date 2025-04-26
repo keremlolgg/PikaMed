@@ -1,3 +1,5 @@
+*.jks
+
 # Build outputs
 /build/
 .android/
