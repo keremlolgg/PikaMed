@@ -9,7 +9,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:PikaMed/hasta menu/models/InsulinDose.dart';
+import 'package:PikaMed/model/InsulinDose.dart';
 
 class Yazi {
   static Map<String, dynamic>? _localizedStrings;

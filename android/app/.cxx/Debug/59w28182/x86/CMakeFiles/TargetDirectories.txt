@@ -1,2 +1,0 @@
-C:/Users/Kerem/. Projeler/StudioProjects/PikaMed/android/app/.cxx/Debug/59w28182/x86/CMakeFiles/edit_cache.dir
-C:/Users/Kerem/. Projeler/StudioProjects/PikaMed/android/app/.cxx/Debug/59w28182/x86/CMakeFiles/rebuild_cache.dir

@@ -97,7 +97,7 @@ class CareView extends StatelessWidget {
                 child: SlideTransition(
                   position: _relaxSecondHalfAnimation,
                   child: Text(
-                    "Karma Gerçeklik\nile Öğrenin",
+                    "Yapay Zeka İle Sohbet Edin",
                     style:
                         TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold),
                   ),
@@ -106,7 +106,7 @@ class CareView extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 64, vertical: 16),
                 child: Text(
-                  "AR teknolojisiyle enjeksiyon noktalarını belirleyip insülin uygulamanızı daha güvenli hale getiriyoruz.",
+                  "İstenidiğiniz zaman cebinizdeki doktorunuz ile sohbet edin.",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,

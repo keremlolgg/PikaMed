@@ -1,2 +1,0 @@
-C:/Users/Kerem/Projects/StudioProjects/PikaMed/android/app/.cxx/Debug/5t364d2c/arm64-v8a/CMakeFiles/edit_cache.dir
-C:/Users/Kerem/Projects/StudioProjects/PikaMed/android/app/.cxx/Debug/5t364d2c/arm64-v8a/CMakeFiles/rebuild_cache.dir

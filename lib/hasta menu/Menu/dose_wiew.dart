@@ -8,15 +8,15 @@ import 'package:PikaMed/functions.dart';
 
 import '../../Menu/navigation_home_screen.dart';
 
-class MyDiaryScreen extends StatefulWidget {
-  const MyDiaryScreen({Key? key, this.animationController}) : super(key: key);
+class DoseScreen extends StatefulWidget {
+  const DoseScreen({Key? key, this.animationController}) : super(key: key);
 
   final AnimationController? animationController;
   @override
-  _MyDiaryScreenState createState() => _MyDiaryScreenState();
+  _DoseScreenState createState() => _DoseScreenState();
 }
 
-class _MyDiaryScreenState extends State<MyDiaryScreen>
+class _DoseScreenState extends State<DoseScreen>
     with TickerProviderStateMixin {
   Animation<double>? topBarAnimation;
 
@@ -65,20 +65,6 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
     TimeOfDay selectedTime = TimeOfDay.now();
     DateTime now = DateTime.now();
 
-    List<InsulinListData> insulinList = InsulinListData.insulinList;
-    List<InsulinListData> pastDoses = [];
-    List<InsulinListData> futureDoses = [];
-
-    // Geçmiş ve gelecek dozları ayır
-    for (var dose in insulinList) {
-      DateTime doseTime = DateTime(now.year, now.month, now.day, dose.hour, dose.minute);
-      if (doseTime.isBefore(now)) {
-        pastDoses.add(dose);
-      } else {
-        futureDoses.add(dose);
-      }
-    }
-
     showDialog(
       context: context,
       builder: (context) {
@@ -123,9 +109,9 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                     Text("Gelecek Dozlar", style: TextStyle(fontWeight: FontWeight.bold)),
                     ListView.builder(
                       shrinkWrap: true,
-                      itemCount: futureDoses.length,
+                      itemCount: InsulinListData.futureInsulinList.length,
                       itemBuilder: (context, index) {
-                        InsulinListData dose = futureDoses[index];
+                        InsulinListData dose = InsulinListData.futureInsulinList[index];
                         return ListTile(
                           title: Text(dose.titleTxt),
                           subtitle: Text(dose.insulinDoses.map((e) => "${e.type} - ${e.dose}${e.unit}").join(", ")),
@@ -133,10 +119,11 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                             icon: Icon(Icons.delete, color: Colors.red),
                             onPressed: () {
                               setState(() {
-                                insulinList.remove(dose);
-                                pastDoses.remove(dose);
+                                InsulinListData.insulinList.remove(dose);
+                                InsulinListData.futureInsulinList.remove(dose);
+                                writeToFile();
+                                InsulinListData.updateDoseLists();
                               });
-
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text("İnsülin dozu silindi!")),
                               );
@@ -149,9 +136,9 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                     Text("Geçmiş Dozlar", style: TextStyle(fontWeight: FontWeight.bold)),
                     ListView.builder(
                       shrinkWrap: true,
-                      itemCount: pastDoses.length,
+                      itemCount: InsulinListData.pastInsulinList.length,
                       itemBuilder: (context, index) {
-                        InsulinListData dose = pastDoses[index];
+                        InsulinListData dose = InsulinListData.pastInsulinList[index];
                         return ListTile(
                           title: Text(dose.titleTxt),
                           subtitle: Text(dose.insulinDoses.map((e) => "${e.type} - ${e.dose}${e.unit}").join(", ")),
@@ -159,16 +146,13 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                             icon: Icon(Icons.delete, color: Colors.red),
                             onPressed: () {
                               setState(() {
-                                insulinList.remove(dose);
-                                pastDoses.remove(dose);
+                                InsulinListData.insulinList.remove(dose);
+                                InsulinListData.pastInsulinList.remove(dose);
+                                writeToFile();
+                                InsulinListData.updateDoseLists();
                               });
-
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text("İnsülin dozu silindi!")),
-                              );
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
                               );
                             },
                           ),
@@ -181,7 +165,12 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
               actions: [
                 TextButton(
                   onPressed: () {
+                    writeToFile();
                     Navigator.of(context).pop();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
+                    );
                   },
                   child: Text("Kapat"),
                 ),
@@ -193,12 +182,12 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
 
                     if (type.isNotEmpty && dose > 0) {
                       setState(() {
-                        insulinList.add(InsulinListData(
+                        InsulinListData.insulinList.add(InsulinListData(
                           hour: selectedTime.hour,
                           minute: selectedTime.minute,
                           insulinDoses: [InsulinDose(type: type, dose: dose, unit: unit)],
                         ));
-                        insulinList.sort((a, b) {
+                        InsulinListData.insulinList.sort((a, b) {
                           return (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute);
                         });
                         writeToFile();

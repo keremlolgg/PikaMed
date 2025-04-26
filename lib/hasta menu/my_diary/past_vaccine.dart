@@ -1,5 +1,5 @@
 import 'package:PikaMed/hasta menu/fitness_app_theme.dart';
-import 'package:PikaMed/hasta menu/models/InsulinDose.dart';
+import 'package:PikaMed/model/InsulinDose.dart';
 import 'package:PikaMed/main.dart';
 import 'package:flutter/material.dart';
 
@@ -19,25 +19,21 @@ class _PastVaccineState extends State<PastVaccine>
     with TickerProviderStateMixin {
   AnimationController? animationController;
   List<InsulinListData> mealsListData = InsulinListData.pastInsulinList;
-
   @override
   void initState() {
     animationController = AnimationController(
         duration: const Duration(milliseconds: 2000), vsync: this);
     super.initState();
   }
-
   Future<bool> getData() async {
     await Future<dynamic>.delayed(const Duration(milliseconds: 50));
     return true;
   }
-
   @override
   void dispose() {
     animationController?.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -81,7 +77,6 @@ class _PastVaccineState extends State<PastVaccine>
     );
   }
 }
-
 class MealsView extends StatelessWidget {
   const MealsView(
       {Key? key, this.insulinList, this.animationController, this.animation})

@@ -8,13 +8,17 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'functions.dart';
 import 'dart:async';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_background/flutter_background.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';  // Notification için ekliyoruz
+import 'model/InsulinDose.dart';
+import 'package:PikaMed/NotificationService.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Locale deviceLocale = PlatformDispatcher.instance.locale;
-  localLanguage = deviceLocale.languageCode;
-
+  _requestNotificationPermission();
+  await NotificationService.instance.initialize();
+  enableBackgroundExecution();
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -22,12 +26,10 @@ void main() async {
   } catch (e) {
     debugPrint('Firebase initialization error: $e');
   }
-
-  enableBackgroundExecution();
-  await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown
-  ]).then((_) => runApp(MyApp()));
+  await SystemChrome.setPreferredOrientations(<DeviceOrientation>[DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
+      .then((_) => runApp(MyApp()));
+  Locale deviceLocale = PlatformDispatcher.instance.locale;
+  localLanguage = deviceLocale.languageCode;
 }
 
 Future<void> enableBackgroundExecution() async {
@@ -38,26 +40,37 @@ Future<void> enableBackgroundExecution() async {
     enableWifiLock: true,
   );
 
+  InsulinListData.updateDoseLists();
   bool hasPermission = await FlutterBackground.initialize(androidConfig: androidConfig);
+
   if (hasPermission) {
     FlutterBackground.enableBackgroundExecution();
   }
 }
+Future<void> _requestNotificationPermission() async {
+  if (await Permission.notification.isDenied) {
+    Permission.notification.request();
+  }
+}
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
 
-class MyApp extends StatelessWidget {
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
       statusBarBrightness:
-          !kIsWeb && Platform.isAndroid ? Brightness.dark : Brightness.light,
+      !kIsWeb && Platform.isAndroid ? Brightness.dark : Brightness.light,
       systemNavigationBarColor: Colors.white,
       systemNavigationBarDividerColor: Colors.transparent,
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
     return MaterialApp(
-      title: 'Marul Tarlasi',
+      title: 'Marul Tarlası',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -81,8 +94,3 @@ class HexColor extends Color {
     return int.parse(hexColor, radix: 16);
   }
 }
-/*
-flutter build apk
-xcopy /Y /I "build\app\outputs\flutter-apk\app-release.apk" "C:\Users\Kerem\Desktop\PikaMed.apk"
-
- */

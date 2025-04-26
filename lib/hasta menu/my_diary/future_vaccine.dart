@@ -1,5 +1,5 @@
 import 'package:PikaMed/hasta menu/fitness_app_theme.dart';
-import 'package:PikaMed/hasta menu/models/InsulinDose.dart';
+import 'package:PikaMed/model/InsulinDose.dart';
 import 'package:PikaMed/main.dart';
 import 'package:flutter/material.dart';
 

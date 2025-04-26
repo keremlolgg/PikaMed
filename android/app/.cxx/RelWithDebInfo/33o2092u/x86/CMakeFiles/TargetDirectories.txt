@@ -1,2 +1,0 @@
-C:/Users/Kerem/Projects/StudioProjects/PikaMed/android/app/.cxx/RelWithDebInfo/33o2092u/x86/CMakeFiles/edit_cache.dir
-C:/Users/Kerem/Projects/StudioProjects/PikaMed/android/app/.cxx/RelWithDebInfo/33o2092u/x86/CMakeFiles/rebuild_cache.dir

@@ -15,8 +15,7 @@ import 'dart:convert';
 import 'package:easy_url_launcher/easy_url_launcher.dart';
 import 'package:PikaMed/functions.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:PikaMed/hasta menu/models/InsulinDose.dart';
+import 'package:PikaMed/model/InsulinDose.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 class NavigationHomeScreen extends StatefulWidget {
@@ -33,7 +32,6 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
   @override
   void initState() {
     super.initState();
-    _requestNotificationPermission();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint('Message received: ${message.notification?.title}, ${message.notification?.body}');
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -60,6 +58,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
     setState(() {
       drawerIndex = DrawerIndex.HOME;
       _user = _auth.currentUser;
+      InsulinListData.updateDoseLists();
     });
     if(_user==null) {
       setState(() {
@@ -113,7 +112,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
       bmiCategory = 'Obez';
     }
     String today = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    if (changeWaterDay == null || changeWaterDay != today) {
+    if (changeWaterDay == "" || changeWaterDay != today) {
       changeWaterDay = DateFormat('yyyy-MM-dd').format(DateTime.now());
       debugPrint("Yeni gün tespit edildi! Veriler sıfırlandı.");
       availableWater=0;
@@ -125,11 +124,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
     writeToFile();
     postInfo();
   }
-  Future<void> _requestNotificationPermission() async {
-    if (await Permission.notification.isDenied) {
-      Permission.notification.request();
-    }
-  }
+
   Future<void> surumkiyasla(BuildContext context) async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String localVersion = packageInfo.version;
@@ -140,7 +135,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
 
     try {
       final response = await http.get(Uri.parse(
-          'https://raw.githubusercontent.com/keremlolgg/PikaMed/main/PikaMed.json'));
+          'https://raw.githubusercontent.com/keremlolgg/PikaMed/main/latest_version.json'));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -216,7 +211,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
             setState(() {
               EasyLauncher.url(
                 // kendi whatsapp linkim değiştirilcek
-                url: 'https://keremkk.glitch.me/doktor',
+                url: 'https://keremkk.vercel.app/doktor',
               );
             });
           } else {

@@ -3,6 +3,7 @@ class InsulinListData {
     required this.hour,
     required this.minute,
     required this.insulinDoses,
+    this.notificationSend = false,
   })  : startColor = _getColorForTime(hour),
         endColor = _getColorForTime(hour, isEnd: true),
         titleTxt = _formatTime(hour, minute);
@@ -13,6 +14,7 @@ class InsulinListData {
   String titleTxt;
   String startColor;
   String endColor;
+  bool notificationSend= false;
 
   /// **JSON formatına dönüştürme metodu**
   Map<String, dynamic> toJson() {
@@ -23,6 +25,7 @@ class InsulinListData {
       'titleTxt': titleTxt,
       'startColor': startColor,
       'endColor': endColor,
+      'notificationSend': notificationSend,
     };
   }
 
@@ -31,13 +34,13 @@ class InsulinListData {
     return InsulinListData(
       hour: json['hour'] ?? 0,
       minute: json['minute'] ?? 0,
+      notificationSend: json['notificationSend']?? false,
       insulinDoses: (json['insulinDoses'] as List<dynamic>?)
           ?.map((e) => InsulinDose.fromJson(e as Map<String, dynamic>))
           .toList() ??
           [],
     );
   }
-
   /// **Mevcut saate göre dozları ayırma**
   static void updateDoseLists() {
     DateTime now = DateTime.now();
@@ -50,6 +53,7 @@ class InsulinListData {
         pastInsulinList.add(dose);
       } else {
         futureInsulinList.add(dose);
+
       }
     }
   }
@@ -107,7 +111,6 @@ class InsulinListData {
   /// **Ana liste**
   static List<InsulinListData> insulinList = [];
 
-  /// **Geçmiş ve gelecek dozları tutan listeler (otomatik güncellenir)**
   static List<InsulinListData> pastInsulinList = [];
   static List<InsulinListData> futureInsulinList = [];
 }

@@ -1,10 +1,11 @@
-import 'package:PikaMed/hasta menu/models/tabIcon_data.dart';
-import 'package:PikaMed/hasta%20menu/Menu/profile.dart';
-import 'package:PikaMed/hasta%20menu/Menu/water.dart';
+import 'models/tabIcon_data.dart';
+import 'Menu/profile.dart';
+import 'Menu/water.dart';
 import 'package:flutter/material.dart';
 import 'bottom_navigation_view/bottom_bar_view.dart';
 import 'fitness_app_theme.dart';
-import 'Menu/my_diary_screen.dart';
+import 'Menu/dose_wiew.dart';
+import 'package:PikaMed/model/InsulinDose.dart';
 
 class HastaHomeScreen extends StatefulWidget {
   @override
@@ -27,10 +28,10 @@ class _HastaHomeScreenState extends State<HastaHomeScreen>
       tab.isSelected = false;
     });
     tabIconsList[0].isSelected = true;
-
+    InsulinListData.updateDoseLists();
     animationController = AnimationController(
         duration: const Duration(milliseconds: 600), vsync: this);
-    tabBody = MyDiaryScreen(animationController: animationController);
+    tabBody = DoseScreen(animationController: animationController);
     super.initState();
 
   }
@@ -88,7 +89,7 @@ class _HastaHomeScreenState extends State<HastaHomeScreen>
                 }
                 setState(() {
                   tabBody =
-                      MyDiaryScreen(animationController: animationController);
+                      DoseScreen(animationController: animationController);
                 });
               });
             } else if (index == 1) {
