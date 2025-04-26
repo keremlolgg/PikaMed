@@ -3,7 +3,7 @@ import 'package:PikaMed/hasta menu/fitness_app_theme.dart';
 import 'package:PikaMed/hasta menu/my_diary/past_vaccine.dart';
 import 'package:PikaMed/hasta menu/my_diary/future_vaccine.dart';
 import 'package:flutter/material.dart';
-import 'package:PikaMed/hasta menu/models/InsulinDose.dart';
+import 'package:PikaMed/model/InsulinDose.dart';
 import 'package:PikaMed/functions.dart';
 
 import '../../Menu/navigation_home_screen.dart';
