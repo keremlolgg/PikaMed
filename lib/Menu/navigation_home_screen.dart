@@ -118,6 +118,9 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
       availableWater=0;
       changeWaterClock = DateFormat('EEEE,  ', 'tr_TR').format(DateTime.now());
       changeWaterClock +='00:00';
+      for (var dose in InsulinListData.insulinList) {
+        dose.notificationSend = false;
+      }
     } else {
       debugPrint("Bugün zaten kaydedilmiş: $today");
     }

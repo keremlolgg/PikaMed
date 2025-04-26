@@ -1,3 +1,5 @@
+import '../NotificationService.dart';
+
 class InsulinListData {
   InsulinListData({
     required this.hour,
@@ -49,11 +51,20 @@ class InsulinListData {
 
     for (var dose in insulinList) {
       DateTime doseTime = DateTime(now.year, now.month, now.day, dose.hour, dose.minute);
+
       if (doseTime.isBefore(now)) {
         pastInsulinList.add(dose);
+        if (!dose.notificationSend) {
+          // Bildirim yolla
+          NotificationService.instance.showNotification(
+            'Hatırlatma ${dose.titleTxt}',
+            'Doz takibi zamanı geldi! ${dose.insulinDoses.map((e) => "${e.type} - ${e.dose}${e.unit}").join(", ")}',
+          );
+          // Bildirim yollandıktan sonra notificationSend true yapılır
+          dose.notificationSend = true;
+        }
       } else {
         futureInsulinList.add(dose);
-
       }
     }
   }

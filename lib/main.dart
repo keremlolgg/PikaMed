@@ -46,6 +46,9 @@ Future<void> enableBackgroundExecution() async {
   if (hasPermission) {
     FlutterBackground.enableBackgroundExecution();
   }
+  Timer.periodic(Duration(minutes: 5), (timer) {
+    InsulinListData.updateDoseLists(); // Her 5 dakikada bir güncellenir
+  });
 }
 Future<void> _requestNotificationPermission() async {
   if (await Permission.notification.isDenied) {
@@ -94,3 +97,4 @@ class HexColor extends Color {
     return int.parse(hexColor, radix: 16);
   }
 }
+
