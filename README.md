@@ -61,17 +61,6 @@ flutter run
 
 ## Proje Yapısı
 
-```
-lib/
-├── functions.dart
-├── NotificationService.dart
-├── main.dart
-├── firebase_options.dart
-├── model/
-├── Menu/
-├── hasta menu/
-└── giris_animasyon/
-```
 
 ## Katkıda Bulunma
 
