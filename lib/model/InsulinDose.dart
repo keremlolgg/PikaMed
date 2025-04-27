@@ -1,3 +1,5 @@
+import 'package:PikaMed/functions.dart';
+
 import '../NotificationService.dart';
 
 class InsulinListData {
@@ -5,7 +7,6 @@ class InsulinListData {
     required this.hour,
     required this.minute,
     required this.insulinDoses,
-    this.notificationSend = false,
   })  : startColor = _getColorForTime(hour),
         endColor = _getColorForTime(hour, isEnd: true),
         titleTxt = _formatTime(hour, minute);
@@ -36,41 +37,38 @@ class InsulinListData {
     return InsulinListData(
       hour: json['hour'] ?? 0,
       minute: json['minute'] ?? 0,
-      notificationSend: json['notificationSend']?? false,
       insulinDoses: (json['insulinDoses'] as List<dynamic>?)
           ?.map((e) => InsulinDose.fromJson(e as Map<String, dynamic>))
           .toList() ??
           [],
     );
   }
-  /// **Mevcut saate göre dozları ayırma**
-  static void updateDoseLists() {
+  static void updateDoseLists() async {
     DateTime now = DateTime.now();
     pastInsulinList.clear();
     futureInsulinList.clear();
 
     for (var dose in insulinList) {
       DateTime doseTime = DateTime(now.year, now.month, now.day, dose.hour, dose.minute);
+      /*
+      await NotificationService.instance.scheduleNotification(
+        id: dose.hour * 100 + dose.minute,
+        hour: dose.hour,
+        minute: dose.minute,
+        title: 'Hatırlatma ${dose.titleTxt}',
+        body: 'Doz takibi zamanı geldi! ${dose.insulinDoses.map((e) => "${e.type} - ${e.dose}${e.unit}").join(", ")}',
+      );
 
+       */
       if (doseTime.isBefore(now)) {
         pastInsulinList.add(dose);
-        if (!dose.notificationSend) {
-          // Bildirim yolla
-          NotificationService.instance.showNotification(
-            'Hatırlatma ${dose.titleTxt}',
-            'Doz takibi zamanı geldi! ${dose.insulinDoses.map((e) => "${e.type} - ${e.dose}${e.unit}").join(", ")}',
-          );
-          // Bildirim yollandıktan sonra notificationSend true yapılır
-          dose.notificationSend = true;
-        }
       } else {
         futureInsulinList.add(dose);
       }
     }
   }
 
-  /// **İnsülin dozu ekleme fonksiyonu**
-  static void addDose(int hour, int minute, InsulinDose dose) {
+  static void addDose(int hour, int minute, InsulinDose dose) async {
     var existingEntry = insulinList.firstWhere(
           (entry) => entry.hour == hour && entry.minute == minute,
       orElse: () => InsulinListData(hour: hour, minute: minute, insulinDoses: []),
@@ -83,6 +81,7 @@ class InsulinListData {
     existingEntry.insulinDoses.add(dose);
     insulinList.sort((a, b) => (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute));
     updateDoseLists();
+    await writeToFile();
   }
 
   /// **İnsülin dozu silme fonksiyonu**
@@ -90,6 +89,7 @@ class InsulinListData {
     if (index >= 0 && index < insulinList.length) {
       insulinList.removeAt(index);
       updateDoseLists();
+      writeToFile();
     }
   }
 
@@ -121,7 +121,6 @@ class InsulinListData {
 
   /// **Ana liste**
   static List<InsulinListData> insulinList = [];
-
   static List<InsulinListData> pastInsulinList = [];
   static List<InsulinListData> futureInsulinList = [];
 }

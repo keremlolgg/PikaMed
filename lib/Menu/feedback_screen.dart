@@ -25,15 +25,13 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var brightness = MediaQuery.of(context).platformBrightness;
-    bool isLightMode = brightness == Brightness.light;
     return Container(
-      color: isLightMode ? AppTheme.nearlyWhite : AppTheme.nearlyBlack,
+      color: AppTheme.nearlyWhite,
       child: SafeArea(
         top: false,
         child: Scaffold(
           backgroundColor:
-              isLightMode ? AppTheme.nearlyWhite : AppTheme.nearlyBlack,
+              AppTheme.nearlyWhite,
           body: SingleChildScrollView(
             child: SizedBox(
               height: MediaQuery.of(context).size.height,
@@ -53,7 +51,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: isLightMode ? Colors.black : Colors.white),
+                          color: Colors.black ),
                     ),
                   ),
                   Container(
@@ -63,7 +61,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 16,
-                          color: isLightMode ? Colors.black : Colors.white),
+                          color: Colors.black),
                     ),
                   ),
                   _buildComposer(),
@@ -74,7 +72,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                         width: 120,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: isLightMode ? Colors.blue : Colors.white,
+                          color: Colors.blue ,
                           borderRadius:
                               const BorderRadius.all(Radius.circular(4.0)),
                           boxShadow: <BoxShadow>[
@@ -92,7 +90,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                 postmessage(
                                   mesaj,
                                   'Marul Tarlası Uygulama Feedback',
-                                  'marultarlasifeedback',
                                   _user!.displayName ?? "Bilinmeyen Kullanıcı",
                                   _user!.email ?? "Bilinmeyen E-posta",
                                   _user!.uid,
@@ -109,9 +106,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                   'Gönder',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
-                                    color: isLightMode
-                                        ? Colors.white
-                                        : Colors.black,
+                                    color: Colors.white,
                                   ),
                                 ),
                               ),

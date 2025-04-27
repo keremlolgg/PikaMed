@@ -3,16 +3,15 @@ import 'package:PikaMed/model/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'Menu/navigation_home_screen.dart';
-import 'package:flutter/foundation.dart' show PlatformDispatcher, kIsWeb;
+import 'package:flutter/foundation.dart' show PlatformDispatcher;
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'functions.dart';
 import 'dart:async';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_background/flutter_background.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';  // Notification için ekliyoruz
-import 'model/InsulinDose.dart';
 import 'package:PikaMed/NotificationService.dart';
+import 'package:flutter/foundation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +29,12 @@ void main() async {
       .then((_) => runApp(MyApp()));
   Locale deviceLocale = PlatformDispatcher.instance.locale;
   localLanguage = deviceLocale.languageCode;
+  if (kDebugMode) {
+    NotificationService.instance.showNotification(
+      'Debug Test Bildimi',
+      'Eğer bu bildirimi görüyorsan lütfen geliştirici ile iletişime geç hatayı düzeltsin.',
+    );
+  }
 }
 
 Future<void> enableBackgroundExecution() async {
@@ -40,15 +45,12 @@ Future<void> enableBackgroundExecution() async {
     enableWifiLock: true,
   );
 
-  InsulinListData.updateDoseLists();
   bool hasPermission = await FlutterBackground.initialize(androidConfig: androidConfig);
 
   if (hasPermission) {
     FlutterBackground.enableBackgroundExecution();
   }
-  Timer.periodic(Duration(minutes: 5), (timer) {
-    InsulinListData.updateDoseLists(); // Her 5 dakikada bir güncellenir
-  });
+
 }
 Future<void> _requestNotificationPermission() async {
   if (await Permission.notification.isDenied) {
@@ -65,12 +67,11 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-      statusBarBrightness:
-      !kIsWeb && Platform.isAndroid ? Brightness.dark : Brightness.light,
+      statusBarIconBrightness: Brightness.light,
+      statusBarBrightness: Brightness.light,
       systemNavigationBarColor: Colors.white,
       systemNavigationBarDividerColor: Colors.transparent,
-      systemNavigationBarIconBrightness: Brightness.dark,
+      systemNavigationBarIconBrightness: Brightness.light,
     ));
     return MaterialApp(
       title: 'Marul Tarlası',

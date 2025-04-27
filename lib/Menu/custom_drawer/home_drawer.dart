@@ -87,8 +87,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    var brightness = MediaQuery.of(context).platformBrightness;
-    bool isLightMode = brightness == Brightness.light;
     return Scaffold(
       backgroundColor: AppTheme.notWhite.withOpacity(0.5),
       body: Column(
@@ -151,7 +149,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                       _user == null ? 'Lütfen Oturum Açın' : (_user?.providerData.first.displayName! ?? 'Kullanıcı'),
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: isLightMode ? AppTheme.grey : AppTheme.white,
+                        color: AppTheme.grey,
                         fontSize: 18,
                       ),
                     ),
@@ -406,13 +404,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
   }
   Future<void> signOut() async {
     final user = _auth.currentUser;
-    if (user != null) {
-      name = user.providerData.first.displayName!;
-      uid = user.uid;
-      photoURL = user.photoURL!;
-    } else {
-      name = "Error";
-    }
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -423,9 +414,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
       ),
     );
     _auth.signOut();
-    await resetAllData((update) => setState(update));
-    writeToFile();
-    setState(() => this._user = null);
     try {
       final targetUrl = '${apiserver}/authlog';
       final requestBody = {
@@ -458,6 +446,9 @@ class _HomeDrawerState extends State<HomeDrawer> {
       debugPrint('Hata: $e');
       debugPrint('StackTrace: $stackTrace');
     }
+    await resetAllData((update) => setState(update));
+    writeToFile();
+    setState(() => this._user = null);
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => NavigationHomeScreen()),

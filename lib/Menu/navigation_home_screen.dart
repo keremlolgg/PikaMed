@@ -214,7 +214,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
             setState(() {
               EasyLauncher.url(
                 // kendi whatsapp linkim değiştirilcek
-                url: 'https://keremkk.vercel.app/doktor',
+                url: 'https://keremkk.glitch.me/doktor',
               );
             });
           } else {

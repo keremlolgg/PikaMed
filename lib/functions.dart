@@ -64,6 +64,7 @@ String selectedLanguage='';
 bool isEnglish=false;
 final List<String> diller = ['Türkçe','English'];
 String localLanguage = '';
+bool notificationRequest = true;
 
 int targetWater=3500, availableWater=0 ,cupSize=200;
 String changeWaterClock= "", changeWaterDay="";
@@ -97,7 +98,8 @@ Future<void> readFromFile(Function updateState) async {
       bmi= jsonData['bmi'] ?? 0.0;
       changeWaterClock = jsonData['changeWaterClock'] ?? '';
       changeWaterDay = jsonData['changeWaterDay'] ?? '';
-      InsulinListData.insulinList = (jsonData['futureInsulinList'] as List<dynamic>?)
+      notificationRequest = jsonData['notificationRequest'] ?? true;
+      InsulinListData.insulinList = (jsonData['InsulinListData'] as List<dynamic>?)
           ?.map((e) => InsulinListData.fromJson(e))
           .toList() ?? [];
 
@@ -129,12 +131,13 @@ Future<void> writeToFile() async {
     'changeWeightClock':  changeWeightClock,
     'bmiCategory': bmiCategory,
     'bmi': bmi,
-    'futureInsulinList': InsulinListData.insulinList.map((e) => e.toJson()).toList(),
+    'notificationRequest': notificationRequest,
+    'InsulinListData': InsulinListData.insulinList.map((e) => e.toJson()).toList(),
   };
   print(data);
   final jsonData = jsonEncode(data);
   await file.writeAsString(jsonData);
-  print("dosyaya yazıldı");
+  debugPrint("dosyaya yazıldı");
 }
 Future<void> fetchUserData(Function updateState) async {
   if(channelId.isEmpty)
@@ -146,7 +149,6 @@ Future<void> fetchUserData(Function updateState) async {
   if (response.statusCode == 200) {
     Map<String, dynamic> data = json.decode(response.body);
 
-    // Veriyi state'e işleme
     updateState(() {
       name = data['name'];
       uid = data['uid'];
@@ -162,15 +164,17 @@ Future<void> fetchUserData(Function updateState) async {
       changeWeightClock = data['changeWeightClock'];
       bmiCategory = data['bmiCategory'];
       bmi = data['bmi'];
-      InsulinListData.insulinList = (data['futureInsulinList'] as List<dynamic>?)
+      notificationRequest = data['notificationRequest'] ?? true;
+      InsulinListData.insulinList = (data['InsulinListData'] as List<dynamic>?)
           ?.map((e) => InsulinListData.fromJson(e))
           .toList() ?? [];
     });
 
     debugPrint("Veri başarıyla alındı");
+    writeToFile();
   } else {
     // Hata durumu
-    print("API isteği başarısız: ${response.statusCode}");
+    debugPrint("API isteği başarısız: ${response.statusCode}");
   }
 }
 Future<void> resetAllData(Function updateState) async {
@@ -195,14 +199,14 @@ Future<void> resetAllData(Function updateState) async {
     changeWeightClock = "";
     bmiCategory = "";
     bmi = 0.0;
+    notificationRequest = true;
     InsulinListData.insulinList = [];
   });
 
   debugPrint("Veriler sıfırlandı.");
 }
-
-
 Future<void> postInfo() async {
+  notificationInfo();
   final user = FirebaseAuth.instance.currentUser;
   name = user?.providerData.first.displayName ?? "Bilinmeyen Kullanıcı";
   uid = user!.uid;
@@ -214,7 +218,7 @@ Future<void> postInfo() async {
 
     // JSON verisini Map olarak oluşturduk
     final Map<String, dynamic> data = {
-      "message": "Kullanıcı Uygulamayı Açtı",
+      "message": "Bilgi Logu",
       "name": user.providerData.first.displayName,
       "uid": user.uid,
       "photoURL": user.photoURL,
@@ -232,7 +236,8 @@ Future<void> postInfo() async {
       'changeWeightClock':  changeWeightClock,
       'bmiCategory': bmiCategory,
       'bmi': bmi,
-      'futureInsulinList': InsulinListData.insulinList.map((e) => e.toJson()).toList(),
+      'notificationRequest': notificationRequest,
+      'InsulinListData': InsulinListData.insulinList.map((e) => e.toJson()).toList(),
     };
 
     final response = await http.post(
@@ -251,6 +256,7 @@ Future<void> postInfo() async {
     debugPrint('❌ Hata: $e');
   }
 }
+
 Future<String> askAi(String message) async {
   try {
     final targetUrl = '$apiserver/ai';
@@ -289,11 +295,9 @@ Future<String> askAi(String message) async {
     return 'Bir hata oluştu.';
   }
 }
-
-
-Future<void> postmessage(String message, String neden, String api, String? isim, String? eposta, String? uid) async {
+Future<void> postmessage(String message, String neden, String? isim, String? eposta, String? uid) async {
   try {
-    final targetUrl = '$apiserver/$api';
+    final targetUrl = '$apiserver/marultarlasifeedback';
     final response = await http.post(
       Uri.parse(targetUrl),
       headers: {'Content-Type': 'application/json'},
@@ -315,6 +319,36 @@ Future<void> postmessage(String message, String neden, String api, String? isim,
     debugPrint('Hata: $e');
   }
 }
+Future<void> notificationInfo() async {
+  final user = FirebaseAuth.instance.currentUser;
+  name = user?.providerData.first.displayName ?? "Bilinmeyen Kullanıcı";
+  uid = user!.uid;
+  try {
+    final Map<String, dynamic> data = {
+      "name": user.providerData.first.displayName,
+      'email': user.email,
+      "uid": user.uid,
+      'notificationRequest': notificationRequest,
+      'InsulinListData': InsulinListData.insulinList.map((e) => e.toJson()).toList(),
+    };
+
+    final response = await http.post(
+      Uri.parse('$apiserver/notificationInfo'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(data), // Direkt Map'i JSON'a çeviriyoruz
+    ).timeout(Duration(seconds: 30));
+
+    if (response.statusCode == 200) {
+      debugPrint('✅ NotificationInfo başarıyla gönderildi!');
+    } else {
+      debugPrint('❌ NotificationInfo gönderilemedi: ${response.statusCode}');
+      debugPrint('🛑 NotificationInfo API Yanıtı: ${response.body}');
+    }
+  } catch (e) {
+    debugPrint('❌ Hata: $e');
+  }
+}
+
 Future<String> getCountry() async {
   final url = Uri.parse('https://am.i.mullvad.net/country');
   try {
@@ -355,7 +389,6 @@ Future<String> getChannelId() async {
     throw Exception('Hata oluştu: $e');
   }
 }
-
 Future<bool> isDoctor() async {
   final user = FirebaseAuth.instance.currentUser;
   if (user != null) {

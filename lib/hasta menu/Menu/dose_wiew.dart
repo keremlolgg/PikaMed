@@ -61,9 +61,7 @@ class _DoseScreenState extends State<DoseScreen>
     TextEditingController typeController = TextEditingController();
     TextEditingController doseController = TextEditingController();
     TextEditingController unitController = TextEditingController(text: 'U');
-
     TimeOfDay selectedTime = TimeOfDay.now();
-    DateTime now = DateTime.now();
 
     showDialog(
       context: context,
@@ -72,100 +70,100 @@ class _DoseScreenState extends State<DoseScreen>
           builder: (context, setState) {
             return AlertDialog(
               title: Text("İnsülin Dozlarını Yönet"),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text("Yeni İnsülin Dozu Ekle", style: TextStyle(fontWeight: FontWeight.bold)),
-                    TextField(
-                      controller: typeController,
-                      decoration: InputDecoration(labelText: "İnsülin Türü"),
-                    ),
-                    TextField(
-                      controller: doseController,
-                      decoration: InputDecoration(labelText: "Doz (U)"),
-                      keyboardType: TextInputType.number,
-                    ),
-                    TextField(
-                      controller: unitController,
-                      decoration: InputDecoration(labelText: "Birim"),
-                    ),
-                    SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () async {
-                        final TimeOfDay? pickedTime = await showTimePicker(
-                          context: context,
-                          initialTime: selectedTime,
-                        );
-                        if (pickedTime != null) {
-                          setState(() {
-                            selectedTime = pickedTime;
-                          });
-                        }
-                      },
-                      child: Text("Saat Seç (${selectedTime.hour}:${selectedTime.minute})"),
-                    ),
-                    Divider(),
-                    Text("Gelecek Dozlar", style: TextStyle(fontWeight: FontWeight.bold)),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: InsulinListData.futureInsulinList.length,
-                      itemBuilder: (context, index) {
-                        InsulinListData dose = InsulinListData.futureInsulinList[index];
-                        return ListTile(
-                          title: Text(dose.titleTxt),
-                          subtitle: Text(dose.insulinDoses.map((e) => "${e.type} - ${e.dose}${e.unit}").join(", ")),
-                          trailing: IconButton(
-                            icon: Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              setState(() {
-                                InsulinListData.insulinList.remove(dose);
-                                InsulinListData.futureInsulinList.remove(dose);
-                                writeToFile();
-                                InsulinListData.updateDoseLists();
-                              });
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("İnsülin dozu silindi!")),
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                    Divider(),
-                    Text("Geçmiş Dozlar", style: TextStyle(fontWeight: FontWeight.bold)),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: InsulinListData.pastInsulinList.length,
-                      itemBuilder: (context, index) {
-                        InsulinListData dose = InsulinListData.pastInsulinList[index];
-                        return ListTile(
-                          title: Text(dose.titleTxt),
-                          subtitle: Text(dose.insulinDoses.map((e) => "${e.type} - ${e.dose}${e.unit}").join(", ")),
-                          trailing: IconButton(
-                            icon: Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              setState(() {
-                                InsulinListData.insulinList.remove(dose);
-                                InsulinListData.pastInsulinList.remove(dose);
-                                writeToFile();
-                                InsulinListData.updateDoseLists();
-                              });
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("İnsülin dozu silindi!")),
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+              content: Container(
+                width: double.maxFinite, // İçeriği genişlet
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text("Yeni İnsülin Dozu Ekle", style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextField(
+                        controller: typeController,
+                        decoration: InputDecoration(labelText: "İnsülin Türü"),
+                      ),
+                      TextField(
+                        controller: doseController,
+                        decoration: InputDecoration(labelText: "Doz (U)"),
+                        keyboardType: TextInputType.number,
+                      ),
+                      TextField(
+                        controller: unitController,
+                        decoration: InputDecoration(labelText: "Birim"),
+                      ),
+                      SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final TimeOfDay? pickedTime = await showTimePicker(
+                            context: context,
+                            initialTime: selectedTime,
+                          );
+                          if (pickedTime != null) {
+                            setState(() {
+                              selectedTime = pickedTime;
+                            });
+                          }
+                        },
+                        child: Text("Saat Seç (${selectedTime.hour}:${selectedTime.minute})"),
+                      ),
+                      Divider(),
+                      Text("Gelecek Dozlar", style: TextStyle(fontWeight: FontWeight.bold)),
+                      ListView.builder(
+                        physics: NeverScrollableScrollPhysics(), // scroll yok
+                        shrinkWrap: true, // boyu kadar uzasın
+                        itemCount: InsulinListData.futureInsulinList.length,
+                        itemBuilder: (context, index) {
+                          InsulinListData dose = InsulinListData.futureInsulinList[index];
+                          return ListTile(
+                            title: Text(dose.titleTxt),
+                            subtitle: Text(dose.insulinDoses.map((e) => "${e.type} - ${e.dose}${e.unit}").join(", ")),
+                            trailing: IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {
+                                int index = InsulinListData.insulinList.indexOf(dose);
+                                setState((){
+                                  InsulinListData.removeDose(index);
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("İnsülin dozu silindi!")),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                      Divider(),
+                      Text("Geçmiş Dozlar", style: TextStyle(fontWeight: FontWeight.bold)),
+                      ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: InsulinListData.pastInsulinList.length,
+                        itemBuilder: (context, index) {
+                          InsulinListData dose = InsulinListData.pastInsulinList[index];
+                          return ListTile(
+                            title: Text(dose.titleTxt),
+                            subtitle: Text(dose.insulinDoses.map((e) => "${e.type} - ${e.dose}${e.unit}").join(", ")),
+                            trailing: IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {
+                                int index = InsulinListData.insulinList.indexOf(dose);
+                                setState((){
+                                 InsulinListData.removeDose(index);
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("İnsülin dozu silindi!")),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
               actions: [
                 TextButton(
                   onPressed: () {
-                    writeToFile();
                     Navigator.of(context).pop();
                     Navigator.pushReplacement(
                       context,
@@ -182,16 +180,11 @@ class _DoseScreenState extends State<DoseScreen>
 
                     if (type.isNotEmpty && dose > 0) {
                       setState(() {
-                        InsulinListData.insulinList.add(InsulinListData(
-                          hour: selectedTime.hour,
-                          minute: selectedTime.minute,
-                          insulinDoses: [InsulinDose(type: type, dose: dose, unit: unit)],
-                        ));
-                        InsulinListData.insulinList.sort((a, b) {
-                          return (a.hour * 60 + a.minute).compareTo(b.hour * 60 + b.minute);
-                        });
-                        writeToFile();
-                        InsulinListData.updateDoseLists();
+                        InsulinListData.addDose(
+                          selectedTime.hour,
+                          selectedTime.minute,
+                          InsulinDose(type: type, dose: dose, unit: unit),
+                        );
                       });
                       Navigator.of(context).pop();
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -212,6 +205,7 @@ class _DoseScreenState extends State<DoseScreen>
       },
     );
   }
+
 
   void addAllListData() {
     const int count = 9;

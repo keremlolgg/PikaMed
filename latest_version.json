@@ -1,6 +1,6 @@
 {
-  "latest_version": "0.2.0",
+  "latest_version": "0.2.1",
   "apk_url": "https://github.com/keremlolgg/keremlolgg/releases/latest",
   "apiserver": "https://keremkk.glitch.me/pikamed",
-  "update_notes": "Arkaplanda dozları hatırlatma eklendi, kod optimize edildi, gereksiz kısımlar temizlendi, yapay zeka optimize edildi, ufak hatalar giderildi, önceki sürümdeki oturum açamama sorunu giderildi."
+  "update_notes": "Doz hatırlatmaları eposta üzerine eklendi, ufak kod düzeltmeleri,"
 }

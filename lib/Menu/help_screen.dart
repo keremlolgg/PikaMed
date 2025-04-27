@@ -15,15 +15,13 @@ class _HelpScreenState extends State<HelpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var brightness = MediaQuery.of(context).platformBrightness;
-    bool isLightMode = brightness == Brightness.light;
     return Container(
-      color: isLightMode ? AppTheme.nearlyWhite : AppTheme.nearlyBlack,
+      color: AppTheme.nearlyWhite ,
       child: SafeArea(
         top: false,
         child: Scaffold(
           backgroundColor:
-              isLightMode ? AppTheme.nearlyWhite : AppTheme.nearlyBlack,
+              AppTheme.nearlyWhite,
           body: Column(
             children: <Widget>[
               Container(
@@ -40,7 +38,7 @@ class _HelpScreenState extends State<HelpScreen> {
                   style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: isLightMode ? Colors.black : Colors.white),
+                      color: Colors.black),
                 ),
               ),
               Container(
@@ -50,7 +48,7 @@ class _HelpScreenState extends State<HelpScreen> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 16,
-                      color: isLightMode ? Colors.black : Colors.white),
+                      color: Colors.black),
                 ),
               ),
               Expanded(
@@ -61,7 +59,7 @@ class _HelpScreenState extends State<HelpScreen> {
                       width: 140,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: isLightMode ? Colors.blue : Colors.white,
+                        color: Colors.blue,
                         borderRadius:
                             const BorderRadius.all(Radius.circular(4.0)),
                         boxShadow: <BoxShadow>[
@@ -87,8 +85,7 @@ class _HelpScreenState extends State<HelpScreen> {
                                 'Bizimle Sohbet Et',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w500,
-                                  color:
-                                      isLightMode ? Colors.white : Colors.black,
+                                  color:Colors.white,
                                 ),
                               ),
                             ),

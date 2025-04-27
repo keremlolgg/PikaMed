@@ -30,7 +30,6 @@ class _CenterNextButtonState extends State<CenterNextButton> {
     if (user != null) {
       debugPrint('Google ile giriş başarılı: ${user.displayName}');
       await fetchUserData((update) => setState(update));
-      writeToFile();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => NavigationHomeScreen()),

@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:PikaMed/functions.dart';
 import 'package:intl/intl.dart';
 
+import '../../Menu/navigation_home_screen.dart';
+
 class profileScreen extends StatefulWidget {
   const profileScreen({Key? key, this.animationController}) : super(key: key);
 
@@ -67,7 +69,6 @@ class _profileScreenState extends State<profileScreen>
             Interval((1 / count) * 4, 1.0, curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController!,
         onTap: () {
-          print("Vücut bilgileri düzenleme tıklandı");
           _showBodyInfoDialog(context);
         },
       ),
@@ -84,8 +85,8 @@ class _profileScreenState extends State<profileScreen>
     );
   }
   void _showBodyInfoDialog(BuildContext context) {
-    final weightController = TextEditingController();
-    final sizeController = TextEditingController();
+    final weightController = TextEditingController(text: weight.toString());
+    final sizeController = TextEditingController(text: size.toString());
 
     showDialog(
       context: context,
@@ -115,7 +116,7 @@ class _profileScreenState extends State<profileScreen>
               child: Text("İptal"),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: ()  {
                 // Ağırlık ve boy bilgilerini al
                 setState(() {
                   weight = int.tryParse(weightController.text)!;

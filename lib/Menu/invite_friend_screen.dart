@@ -15,14 +15,12 @@ class _InviteFriendState extends State<InviteFriend> {
 
   @override
   Widget build(BuildContext context) {
-    var brightness = MediaQuery.of(context).platformBrightness;
-    bool isLightMode = brightness == Brightness.light;
     return Container(
-      color: isLightMode ? AppTheme.white : AppTheme.nearlyBlack,
+      color: AppTheme.white,
       child: SafeArea(
         top: false,
         child: Scaffold(
-          backgroundColor: isLightMode ? AppTheme.white : AppTheme.nearlyBlack,
+          backgroundColor: AppTheme.white,
           body: Column(
             children: <Widget>[
               Container(
@@ -39,18 +37,18 @@ class _InviteFriendState extends State<InviteFriend> {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: isLightMode ? Colors.black : Colors.white,
+                    color: Colors.black,
                   ),
                 ),
               ),
               Container(
                 padding: const EdgeInsets.only(top: 16),
                 child: Text(
-                  'Her şeyi son dakikada yapan insanlardan mısınız?',
+                  'Arkaşını Davet Etmek İçin Tıkla',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
-                    color: isLightMode ? Colors.black : Colors.white,
+                    color:Colors.black ,
                   ),
                 ),
               ),
@@ -62,7 +60,7 @@ class _InviteFriendState extends State<InviteFriend> {
                       width: 120,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: isLightMode ? Colors.blue : Colors.white,
+                        color: Colors.blue ,
                         borderRadius:
                             const BorderRadius.all(Radius.circular(4.0)),
                         boxShadow: <BoxShadow>[
@@ -76,7 +74,12 @@ class _InviteFriendState extends State<InviteFriend> {
                         color: Colors.transparent,
                         child: InkWell(
                           onTap: () {
-                            Share.share('Marul Tarlası Uygulaması Davet Promt https://keremkk.can.re');
+                            Share.share(
+                                "🎉 Pikamed Uygulaması ile tanışın! 💉\n"
+                                    "İnsülin dozlarınızı kolayca takip edin ve sağlığınızı kontrol altında tutun! 🩺\n"
+                                    "Hemen katılın ve yaşamınızı daha sağlıklı hale getirin: https://keremkk.can.re/pikamed\n"
+                                    "Hadi, sağlıklı bir adım atmaya başlayalım! 🌟"
+                            );
                           },
                           child: Center(
                             child: Row(
@@ -85,8 +88,7 @@ class _InviteFriendState extends State<InviteFriend> {
                               children: <Widget>[
                                 Icon(
                                   Icons.share,
-                                  color:
-                                      isLightMode ? Colors.white : Colors.black,
+                                  color:Colors.white,
                                   size: 22,
                                 ),
                                 Padding(
@@ -95,9 +97,7 @@ class _InviteFriendState extends State<InviteFriend> {
                                     'Paylaş',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w500,
-                                      color: isLightMode
-                                          ? Colors.white
-                                          : Colors.black,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),

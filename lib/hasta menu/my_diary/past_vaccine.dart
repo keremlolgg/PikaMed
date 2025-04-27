@@ -18,7 +18,6 @@ class PastVaccine extends StatefulWidget {
 class _PastVaccineState extends State<PastVaccine>
     with TickerProviderStateMixin {
   AnimationController? animationController;
-  List<InsulinListData> mealsListData = InsulinListData.pastInsulinList;
   @override
   void initState() {
     animationController = AnimationController(
@@ -50,11 +49,11 @@ class _PastVaccineState extends State<PastVaccine>
               child: ListView.builder(
                 padding: const EdgeInsets.only(
                     top: 0, bottom: 0, right: 16, left: 16),
-                itemCount: mealsListData.length,
+                itemCount: InsulinListData.pastInsulinList.length,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (BuildContext context, int index) {
                   final int count =
-                  mealsListData.length > 10 ? 10 : mealsListData.length;
+                  InsulinListData.pastInsulinList.length > 10 ? 10 : InsulinListData.pastInsulinList.length;
                   final Animation<double> animation =
                   Tween<double>(begin: 0.0, end: 1.0).animate(
                       CurvedAnimation(
@@ -64,7 +63,7 @@ class _PastVaccineState extends State<PastVaccine>
                   animationController?.forward();
 
                   return MealsView(
-                    insulinList: mealsListData[index],
+                    insulinList: InsulinListData.pastInsulinList[index],
                     animation: animation,
                     animationController: animationController!,
                   );
