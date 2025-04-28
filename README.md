@@ -9,14 +9,8 @@ PikaMed, sağlık hizmetleri ve hasta takibi için geliştirilmiş bir mobil uyg
 - 🔔 Anlık bildirimler
 - 💬 Mesajlaşma özelliği
 - 📊 Hasta takip sistemi
-<<<<<<< HEAD
-<<<<<<< HEAD
 - 🌐 Çoklu platform desteği (Android)
-=======
->>>>>>> e6ee5f3c3b1ee022c5fa4080ab3efc7af85d4ba1
-=======
 - 🌐 Çoklu platform desteği (Android, iOS, Web)
->>>>>>> 056cc36be1cbbf03868189c725a1027f6d10c7d4
 - 🤖 Yapay zeka destekli hasta analizi (Gemini AI)
 
 ## Teknolojiler
