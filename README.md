@@ -10,27 +10,24 @@ PikaMed, sağlık hizmetleri ve hasta takibi için geliştirilmiş bir mobil uyg
 - 💬 Mesajlaşma özelliği
 - 📊 Hasta takip sistemi
 <<<<<<< HEAD
+<<<<<<< HEAD
 - 🌐 Çoklu platform desteği (Android)
 =======
 >>>>>>> e6ee5f3c3b1ee022c5fa4080ab3efc7af85d4ba1
+=======
+- 🌐 Çoklu platform desteği (Android, iOS, Web)
+>>>>>>> 056cc36be1cbbf03868189c725a1027f6d10c7d4
 - 🤖 Yapay zeka destekli hasta analizi (Gemini AI)
 
 ## Teknolojiler
 
 - Flutter SDK
-<<<<<<< HEAD
 - Firebase (Authentication, Analytics, Cloud Messaging)
 - Google Sign-In
 - Gemini AI
 - HTTP
 - Flutter Chat UI
 - Flutter Local Notifications
-=======
-- Firebase
-- Google Sign-In
-- Gemini AI
-- HTTP
->>>>>>> e6ee5f3c3b1ee022c5fa4080ab3efc7af85d4ba1
 
 ## Gereksinimler
 
@@ -40,6 +37,7 @@ PikaMed, sağlık hizmetleri ve hasta takibi için geliştirilmiş bir mobil uyg
 - Android Studio / VS Code
 - Git
 - Gemini AI API anahtarı
+- Bir API sunucusu
 
 ## Kurulum
 
@@ -59,30 +57,17 @@ flutter pub get
 - `google-services.json` ve `GoogleService-Info.plist` dosyalarını ilgili klasörlere ekleyin
 
 4. Server Code:
-- [Code](https://glitch.com/edit/#!/keremkk?path=routes/geogame.js)
-<<<<<<< HEAD
-=======
+- [Code](https://glitch.com/edit/#!/keremkk?path=routes/pikamed.js)
 - Api server oluşturun ve apiserveri değiştirin.
->>>>>>> e6ee5f3c3b1ee022c5fa4080ab3efc7af85d4ba1
 
 5. Uygulamayı çalıştırın:
+
 ```bash
 flutter run
 ```
 
 ## Proje Yapısı
 
-```
-lib/
-├── functions.dart
-├── NotificationService.dart
-├── main.dart
-├── firebase_options.dart
-├── model/
-├── Menu/
-├── hasta menu/
-└── giris_animasyon/
-```
 
 ## Katkıda Bulunma
 
