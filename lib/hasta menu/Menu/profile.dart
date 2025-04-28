@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:PikaMed/functions.dart';
 import 'package:intl/intl.dart';
 
-import '../../Menu/navigation_home_screen.dart';
 
 class profileScreen extends StatefulWidget {
   const profileScreen({Key? key, this.animationController}) : super(key: key);

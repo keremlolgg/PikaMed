@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:PikaMed/model/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,15 +8,13 @@ import 'firebase_options.dart';
 import 'functions.dart';
 import 'dart:async';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_background/flutter_background.dart';
-import 'package:PikaMed/NotificationService.dart';
+import 'package:PikaMed/Service/NotificationService.dart';
 import 'package:flutter/foundation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   _requestNotificationPermission();
   await NotificationService.instance.initialize();
-  enableBackgroundExecution();
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -37,21 +34,6 @@ void main() async {
   }
 }
 
-Future<void> enableBackgroundExecution() async {
-  const androidConfig = FlutterBackgroundAndroidConfig(
-    notificationTitle: "Arka Planda Çalışıyor",
-    notificationText: "Doz Takip Aktif.",
-    notificationImportance: AndroidNotificationImportance.normal,
-    enableWifiLock: true,
-  );
-
-  bool hasPermission = await FlutterBackground.initialize(androidConfig: androidConfig);
-
-  if (hasPermission) {
-    FlutterBackground.enableBackgroundExecution();
-  }
-
-}
 Future<void> _requestNotificationPermission() async {
   if (await Permission.notification.isDenied) {
     Permission.notification.request();
@@ -74,7 +56,7 @@ class _MyAppState extends State<MyApp> {
       systemNavigationBarIconBrightness: Brightness.light,
     ));
     return MaterialApp(
-      title: 'Marul Tarlası',
+      title: 'PikaMed',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,

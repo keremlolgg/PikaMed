@@ -1,7 +1,9 @@
 import 'package:PikaMed/model/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:PikaMed/functions.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:PikaMed/Service/AuthService.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:PikaMed/Menu/navigation_home_screen.dart';
 
 class FeedbackScreen extends StatefulWidget {
   @override
@@ -9,17 +11,13 @@ class FeedbackScreen extends StatefulWidget {
 }
 String mesaj="";
 class _FeedbackScreenState extends State<FeedbackScreen> {
-  final _auth = firebase_auth.FirebaseAuth.instance;
-  firebase_auth.User? _user;
+  final AuthService _authService = AuthService();
+  User? user;
   @override
   void initState() {
     super.initState();
-    _user = _auth.currentUser;
-    _auth.authStateChanges().listen((firebase_auth.User? user) {
-      setState(() {
-        _user = user;
-      });
-      debugPrint('user=$_user');
+    setState(() {
+      user = _authService.currentUser;
     });
   }
 
@@ -86,13 +84,17 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                           color: Colors.transparent,
                           child: InkWell(
                             onTap: () {
-                              if (_user != null) {
+                              if (user != null) {
                                 postmessage(
                                   mesaj,
                                   'Marul Tarlası Uygulama Feedback',
-                                  _user!.displayName ?? "Bilinmeyen Kullanıcı",
-                                  _user!.email ?? "Bilinmeyen E-posta",
-                                  _user!.uid,
+                                  user!.displayName ?? "Bilinmeyen Kullanıcı",
+                                  user!.email ?? "Bilinmeyen E-posta",
+                                  user!.uid,
+                                );
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
                                 );
                               } else {
                                 debugPrint("Hata: Kullanıcı bilgileri alınamadı.");

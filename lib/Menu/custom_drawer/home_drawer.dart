@@ -1,11 +1,9 @@
+import 'package:PikaMed/Service/AuthService.dart';
+import 'package:PikaMed/functions.dart';
 import 'package:PikaMed/model/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:PikaMed/functions.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../navigation_home_screen.dart';
 
@@ -27,23 +25,21 @@ class HomeDrawer extends StatefulWidget {
 
 class _HomeDrawerState extends State<HomeDrawer> {
   List<DrawerList>? drawerList;
-  final _auth = firebase_auth.FirebaseAuth.instance;
-  firebase_auth.User? _user;
+  final AuthService _authService = AuthService();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  User? user;
   @override
   void initState() {
     super.initState();
-    _user = _auth.currentUser;
-    _auth.authStateChanges().listen((firebase_auth.User? user) {
+    _auth.authStateChanges().listen((User? _user) {
       setState(() {
-        _user = user;
+        user = _user;
       });
       debugPrint('user=$_user');
     });
     setDrawerListArray();
   }
-
-
   void setDrawerListArray() {
     drawerList = <DrawerList>[
       DrawerList(
@@ -131,22 +127,18 @@ class _HomeDrawerState extends State<HomeDrawer> {
                             child: ClipRRect(
                               borderRadius:
                                   const BorderRadius.all(Radius.circular(60.0)),
-                              child: _user == null ? Image.asset('assets/custom_profile.png') : Image.network(
-                                _user?.photoURL ?? 'https://http.dog/404.jpg',
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Icon(Icons.account_circle, size: 50); // Hata durumunda bir ikon göster
-                                },
+                              child: user == null ? Image.asset('assets/custom_profile.png') : Image.network(
+                                user?.photoURL ?? photoURL),
                               ),
                             ),
                           ),
-                        ),
                       );
                     },
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8, left: 4),
                     child: Text(
-                      _user == null ? 'Lütfen Oturum Açın' : (_user?.providerData.first.displayName! ?? 'Kullanıcı'),
+                      user == null ? 'Lütfen Oturum Açın' : (user?.providerData.first.displayName! ?? 'Kullanıcı'),
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: AppTheme.grey,
@@ -183,7 +175,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
             children: <Widget>[
               ListTile(
                 title: Text(
-                  _user == null ? 'Oturum Aç': 'Oturumu Kapat',
+                  user == null ? 'Oturum Aç': 'Oturumu Kapat',
                   style: TextStyle(
                     fontFamily: AppTheme.fontName,
                     fontWeight: FontWeight.w600,
@@ -194,7 +186,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 ),
                 trailing: Icon(
                   Icons.power_settings_new,
-                  color: _user == null ? Colors.green : Colors.red,
+                  color: user == null ? Colors.green : Colors.red,
                 ),
                 onTap: () { onTapped(context); },
               ),
@@ -209,9 +201,9 @@ class _HomeDrawerState extends State<HomeDrawer> {
   }
 
   void onTapped(BuildContext context) async {
-    if(_user==null){
+    if (_authService.currentUser == null) {
       try {
-        final user = await this.googleSignIn();
+        final user = await _authService.googleSignIn(context: context);
 
         if (user == null) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -219,17 +211,33 @@ class _HomeDrawerState extends State<HomeDrawer> {
           );
           return;
         }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Oturum açma hatası: $e")),
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
         );
+      } catch (e) {
         debugPrint('Oturum açma hatası: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Oturum açma hatası oluştu.")),
+        );
+      }
+    } else {
+      try {
+        await _authService.signOut(context: context);
+        await resetAllData((update) => setState(update));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
+        );
+      } catch (e) {
+        debugPrint('Çıkış hatası: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Çıkış yaparken hata oluştu.")),
+        );
       }
     }
-    else {
-      signOut();
-    }
   }
+
 
   Widget inkwell(DrawerList listData) {
     return Material(
@@ -337,123 +345,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
     widget.callBackIndex!(indexScreen);
   }
 
-  Future<firebase_auth.User?> googleSignIn() async {
-    try {
-      await GoogleSignIn().signOut();
-      final googleUser = await GoogleSignIn().signIn();
-
-      if (googleUser == null) {
-        // Kullanıcı oturum açmayı iptal etti
-        debugPrint("Kullanıcı oturum açmayı iptal etti.");
-        return null;
-      }
-
-      final googleAuth = await googleUser.authentication;
-      final credential = firebase_auth.GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      final user = (await _auth.signInWithCredential(credential)).user;
-      if (user != null) {
-        name=  user.providerData.first.displayName!;
-        uid = user.uid;
-        photoURL = user.photoURL!;
-      } else {
-        name = "Error";
-      }
-      await fetchUserData((update) => setState(update));
-      writeToFile();
-      try {
-        final targetUrl = '${apiserver}/authlog';
-        final response = await http.post(
-          Uri.parse(targetUrl),
-          headers: {'Content-Type': 'application/json'},
-          body: json.encode({
-            'sebep': 'Giriş',
-            'uid': uid,
-            'name': name,
-            'profilUrl': photoURL,
-          }),
-        ).timeout(Duration(seconds: 30));
-
-        if (response.statusCode == 200) {
-          debugPrint('Mesaj başarıyla gönderildi!');
-        } else {
-          // Yanıtın içeriğini de yazdır
-          debugPrint('Mesaj gönderilemedi: ${response.statusCode}');
-          debugPrint('Yanıt içeriği: ${response.body}');
-        }
-      } catch (e) {
-        // Hata türünü ve mesajını yazdır
-        debugPrint('Hata: ${e.toString()}');
-
-        // Eğer hata bir http isteği ile ilgiliyse, daha fazla bilgi ekleyebiliriz
-        if (e is http.ClientException) {
-          debugPrint('HTTP İsteği Hatası: ${e.message}');
-        } else if (e is TimeoutException) {
-          debugPrint('Zaman aşımı hatası: İstek zaman aşımına uğradı.');
-        } else {
-          debugPrint('Bilinmeyen hata: ${e.runtimeType}');
-        }
-      }
-      return user;
-    } catch (error) {
-      debugPrint("Google Sign-In Hatası: $error");
-      return null;
-    }
-  }
-  Future<void> signOut() async {
-    final user = _auth.currentUser;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          user == null
-              ? 'Zaten giriş yapmadınız.'
-              : '"${user.providerData.first.displayName!}" adlı hesaptan çıkış yaptınız.',
-        ),
-      ),
-    );
-    _auth.signOut();
-    try {
-      final targetUrl = '${apiserver}/authlog';
-      final requestBody = {
-        'sebep': "Çıkış",
-        'name': name,
-        'uid': uid,
-        'profilUrl': photoURL,
-      };
-
-      debugPrint('Çıkış isteği API\'ye gönderiliyor: $targetUrl');
-      debugPrint('İstek verileri: ${json.encode(requestBody)}');
-
-      final response = await http.post(
-        Uri.parse(targetUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(requestBody),
-      ).timeout(Duration(seconds: 30));
-
-      debugPrint('API yanıt kodu: ${response.statusCode}');
-      debugPrint('API yanıtı: ${response.body}');
-
-      if (response.statusCode == 200) {
-        debugPrint('Çıkış mesajı başarıyla gönderildi!');
-      } else {
-        debugPrint('Çıkış mesajı gönderilemedi: ${response.statusCode} - ${response.body}');
-      }
-    } on TimeoutException {
-      debugPrint('Hata: Çıkış isteği zaman aşımına uğradı!');
-    } catch (e, stackTrace) {
-      debugPrint('Hata: $e');
-      debugPrint('StackTrace: $stackTrace');
-    }
-    await resetAllData((update) => setState(update));
-    writeToFile();
-    setState(() => this._user = null);
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
-    );
-  }
 }
 
 enum DrawerIndex {

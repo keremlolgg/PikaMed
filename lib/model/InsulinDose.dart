@@ -1,7 +1,5 @@
 import 'package:PikaMed/functions.dart';
 
-import '../NotificationService.dart';
-
 class InsulinListData {
   InsulinListData({
     required this.hour,

@@ -5,7 +5,7 @@ import 'package:PikaMed/Menu/feedback_screen.dart';
 import 'package:PikaMed/Menu/help_screen.dart';
 import 'package:PikaMed/Menu/invite_friend_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:PikaMed/hasta menu/fitness_app_home_screen.dart';
 import 'package:PikaMed/giris_animasyon/introduction_animation_screen.dart';
 import 'package:http/http.dart' as http;
@@ -17,7 +17,7 @@ import 'package:PikaMed/functions.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:PikaMed/model/InsulinDose.dart';
 import 'package:intl/date_symbol_data_local.dart';
-
+import 'package:PikaMed/Service/AuthService.dart';
 class NavigationHomeScreen extends StatefulWidget {
   @override
   _NavigationHomeScreenState createState() => _NavigationHomeScreenState();
@@ -26,12 +26,24 @@ class NavigationHomeScreen extends StatefulWidget {
 class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
   Widget? screenView;
   DrawerIndex? drawerIndex;
-  final _auth = firebase_auth.FirebaseAuth.instance;
-  firebase_auth.User? _user;
+
+  final AuthService _authService = AuthService();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  User? user;
 
   @override
   void initState() {
     super.initState();
+    _auth.authStateChanges().listen((User? _user) {
+      setState(() {
+        user = _user;
+      });
+      debugPrint('user=$_user');
+      _initUserAndNotifications();
+    });
+  }
+
+  Future<void> _initUserAndNotifications() async {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint('Message received: ${message.notification?.title}, ${message.notification?.body}');
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -55,47 +67,22 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
         );
       });
     });
+
     setState(() {
       drawerIndex = DrawerIndex.HOME;
-      _user = _auth.currentUser;
-      InsulinListData.updateDoseLists();
+      InsulinListData.updateDoseLists();  // Diğer verileri güncelle
     });
-    if(_user==null) {
+
+    if (user == null) {
       setState(() {
-        screenView =GirisAnimasyonScreen();
+        screenView = GirisAnimasyonScreen();  // Giriş ekranı göster
       });
     } else {
       setState(() {
-        screenView = HastaHomeScreen();
+        screenView = HastaHomeScreen();  // Hasta ana ekranı göster
       });
     }
-    surumkiyasla(context);
-    starting();
-  }
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: AppTheme.white,
-      child: SafeArea(
-        top: false,
-        bottom: false,
-        child: Scaffold(
-          backgroundColor: AppTheme.nearlyWhite,
-          body: DrawerUserController(
-            screenIndex: drawerIndex,
-            drawerWidth: MediaQuery.of(context).size.width * 0.75,
-            onDrawerCall: (DrawerIndex drawerIndexdata) {
-              changeIndex(drawerIndexdata);
-              //callback from drawer for replace screen as user need with passing DrawerIndex(Enum index)
-            },
-            screenView: screenView,
-            //we replace screen view as we need on navigate starting screens like MyHomePage, HelpScreen, FeedbackScreen, etc...
-          ),
-        ),
-      ),
-    );
-  }
-  void starting()async {
+    surumkiyasla(context);  // Yazılım sürümünü karşılaştır
     await initializeDateFormatting('tr_TR', null);
     await readFromFile((update) => setState(update));
     InsulinListData.updateDoseLists();
@@ -126,6 +113,29 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
     }
     writeToFile();
     postInfo();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: AppTheme.white,
+      child: SafeArea(
+        top: false,
+        bottom: false,
+        child: Scaffold(
+          backgroundColor: AppTheme.nearlyWhite,
+          body: DrawerUserController(
+            screenIndex: drawerIndex,
+            drawerWidth: MediaQuery.of(context).size.width * 0.75,
+            onDrawerCall: (DrawerIndex drawerIndexdata) {
+              changeIndex(drawerIndexdata);
+              //callback from drawer for replace screen as user need with passing DrawerIndex(Enum index)
+            },
+            screenView: screenView,
+            //we replace screen view as we need on navigate starting screens like MyHomePage, HelpScreen, FeedbackScreen, etc...
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> surumkiyasla(BuildContext context) async {
@@ -198,7 +208,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
       drawerIndex = drawerIndexdata;
       switch (drawerIndex) {
         case DrawerIndex.HOME:
-          if(_user==null) {
+          if(user==null) {
             setState(() {
               screenView =GirisAnimasyonScreen();
             });

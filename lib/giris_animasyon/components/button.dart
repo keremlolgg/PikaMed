@@ -1,13 +1,10 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:PikaMed/Menu/navigation_home_screen.dart';
 import 'package:PikaMed/functions.dart';
-import 'dart:convert';
 import 'dart:async';
-import 'package:http/http.dart' as http;
-
+import 'package:PikaMed/Service/AuthService.dart';
 class CenterNextButton extends StatefulWidget {
   final AnimationController animationController;
   final VoidCallback onNextClick;
@@ -21,12 +18,13 @@ class CenterNextButton extends StatefulWidget {
   @override
   _CenterNextButtonState createState() => _CenterNextButtonState();
 }
-
 class _CenterNextButtonState extends State<CenterNextButton> {
 
   Future<void> onTapped(BuildContext context) async {
-    final _auth = firebase_auth.FirebaseAuth.instance;
-    firebase_auth.User? user = await googleSignIn(_auth);
+    final AuthService _authService = AuthService();
+    final fetchedUser = await _authService.googleSignIn(context: context);
+    User? user;
+    user = fetchedUser;
     if (user != null) {
       debugPrint('Google ile giriş başarılı: ${user.displayName}');
       await fetchUserData((update) => setState(update));
@@ -36,73 +34,6 @@ class _CenterNextButtonState extends State<CenterNextButton> {
       );
     } else {
       debugPrint('Google ile giriş başarısız.');
-    }
-  }
-  Future<firebase_auth.User?> googleSignIn(firebase_auth.FirebaseAuth _auth) async {
-    try {
-      await GoogleSignIn().signOut();
-      final googleUser = await GoogleSignIn().signIn();
-
-      if (googleUser == null) {
-        debugPrint("Kullanıcı oturum açmayı iptal etti.");
-        return null;
-      }
-
-      final googleAuth = await googleUser.authentication;
-      final credential = firebase_auth.GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      final user = (await _auth.signInWithCredential(credential)).user;
-      if (user == null) {
-        debugPrint("Google Sign-In başarısız.");
-        return null;
-      }
-      String isim =  user.providerData.first.displayName!;
-      String email = user.email!;
-      String uid = user.uid;
-      String profilurl = user.photoURL!;
-
-      try {
-        final targetUrl = '${apiserver}/authlog';
-        final response = await http.post(
-          Uri.parse(targetUrl),
-          headers: {'Content-Type': 'application/json'},
-          body: json.encode({
-            'sebep': 'Giriş',
-            'uid': uid,
-            'name': isim,
-            'email': email,
-            'profilUrl': profilurl,
-          }),
-        ).timeout(Duration(seconds: 30));
-
-        if (response.statusCode == 200) {
-          debugPrint('Mesaj başarıyla gönderildi!');
-        } else {
-          // Yanıtın içeriğini de yazdır
-          debugPrint('Mesaj gönderilemedi: ${response.statusCode}');
-          debugPrint('Yanıt içeriği: ${response.body}');
-        }
-      } catch (e) {
-        // Hata türünü ve mesajını yazdır
-        debugPrint('Hata: ${e.toString()}');
-
-        // Eğer hata bir http isteği ile ilgiliyse, daha fazla bilgi ekleyebiliriz
-        if (e is http.ClientException) {
-          debugPrint('HTTP İsteği Hatası: ${e.message}');
-        } else if (e is TimeoutException) {
-          debugPrint('Zaman aşımı hatası: İstek zaman aşımına uğradı.');
-        } else {
-          debugPrint('Bilinmeyen hata: ${e.runtimeType}');
-        }
-      }
-
-      return user;
-    } catch (error) {
-      debugPrint("Google Sign-In Hatası: $error");
-      return null;
     }
   }
 

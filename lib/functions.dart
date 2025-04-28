@@ -1,5 +1,4 @@
 import 'package:http/http.dart' as http;
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -10,6 +9,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:PikaMed/model/InsulinDose.dart';
+
+import 'Service/AuthService.dart';
 
 class Yazi {
   static Map<String, dynamic>? _localizedStrings;
@@ -73,6 +74,7 @@ int weight=0, size=0;
 String changeWeightClock= "", bmiCategory="";
 double bmi=0.0;
 
+final AuthService _authService = AuthService();
 Future<void> readFromFile(Function updateState) async {
   final directory = await getApplicationDocumentsDirectory();
   final filePath = '${directory.path}/pikamed.json';
@@ -140,10 +142,14 @@ Future<void> writeToFile() async {
   debugPrint("dosyaya yazıldı");
 }
 Future<void> fetchUserData(Function updateState) async {
+  String? token = await AuthService().getIdToken();
   if(channelId.isEmpty)
     channelId= await getChannelId();
   final response = await http.get(
     Uri.parse('$apiserver/json/$channelId'), // API URL'sini buraya ekleyin
+    headers: {
+      'Authorization': 'Bearer $token', // Token'ı Authorization başlığına ekleyin
+    },
   );
 
   if (response.statusCode == 200) {
@@ -206,8 +212,9 @@ Future<void> resetAllData(Function updateState) async {
   debugPrint("Veriler sıfırlandı.");
 }
 Future<void> postInfo() async {
+  String? token = await AuthService().getIdToken();
   notificationInfo();
-  final user = FirebaseAuth.instance.currentUser;
+  final user = _authService.currentUser;
   name = user?.providerData.first.displayName ?? "Bilinmeyen Kullanıcı";
   uid = user!.uid;
   photoURL = user.photoURL!;
@@ -242,7 +249,10 @@ Future<void> postInfo() async {
 
     final response = await http.post(
       Uri.parse('$apiserver/info'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: json.encode(data), // Direkt Map'i JSON'a çeviriyoruz
     ).timeout(Duration(seconds: 30));
 
@@ -258,11 +268,12 @@ Future<void> postInfo() async {
 }
 
 Future<String> askAi(String message) async {
+  String? token = await AuthService().getIdToken();
   try {
     final targetUrl = '$apiserver/ai';
     final response = await http.post(
       Uri.parse(targetUrl),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json','Authorization': 'Bearer $token',},
       body: json.encode({
         'uid': uid,
         'message': message,
@@ -296,11 +307,12 @@ Future<String> askAi(String message) async {
   }
 }
 Future<void> postmessage(String message, String neden, String? isim, String? eposta, String? uid) async {
+  String? token = await AuthService().getIdToken();
   try {
-    final targetUrl = '$apiserver/marultarlasifeedback';
+    final targetUrl = '$apiserver/pikamedfeedback';
     final response = await http.post(
       Uri.parse(targetUrl),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json','Authorization': 'Bearer $token',},
       body: json.encode({
         'sebep': neden,
         'message': message,
@@ -320,21 +332,20 @@ Future<void> postmessage(String message, String neden, String? isim, String? epo
   }
 }
 Future<void> notificationInfo() async {
-  final user = FirebaseAuth.instance.currentUser;
-  name = user?.providerData.first.displayName ?? "Bilinmeyen Kullanıcı";
-  uid = user!.uid;
+  String? token = await AuthService().getIdToken();
+  final user = _authService.currentUser;
   try {
     final Map<String, dynamic> data = {
-      "name": user.providerData.first.displayName,
-      'email': user.email,
-      "uid": user.uid,
+      "name": user?.providerData.first.displayName,
+      'email': user?.email,
+      "uid": user?.uid,
       'notificationRequest': notificationRequest,
       'InsulinListData': InsulinListData.insulinList.map((e) => e.toJson()).toList(),
     };
 
     final response = await http.post(
       Uri.parse('$apiserver/notificationInfo'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json','Authorization': 'Bearer $token',},
       body: json.encode(data), // Direkt Map'i JSON'a çeviriyoruz
     ).timeout(Duration(seconds: 30));
 
@@ -366,12 +377,13 @@ Future<String> getCountry() async {
   }
 }
 Future<String> getChannelId() async {
-  final user = FirebaseAuth.instance.currentUser;
+  final user = _authService.currentUser;
+  String? token = await AuthService().getIdToken();
   final url = Uri.parse('$apiserver/check-user');
   try {
     final response = await http.post(
       url,
-      headers: {"Content-Type": "application/json"},
+      headers: {"Content-Type": "application/json",'Authorization': 'Bearer $token',},
       body: jsonEncode({"uid": user?.uid}),
     );
 
@@ -390,7 +402,7 @@ Future<String> getChannelId() async {
   }
 }
 Future<bool> isDoctor() async {
-  final user = FirebaseAuth.instance.currentUser;
+  final user = _authService.currentUser;
   if (user != null) {
     // Yeni bir idToken alınması
     final idTokenResult = await user.getIdTokenResult(); // true parametresi ile yeni bir idToken alınır.

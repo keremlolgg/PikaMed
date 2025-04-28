@@ -1,6 +1,6 @@
 {
-  "latest_version": "0.2.1",
+  "latest_version": "0.2.2",
   "apk_url": "https://github.com/keremlolgg/PikaMed/releases/latest",
   "apiserver": "https://keremkk.glitch.me/pikamed",
-  "update_notes": "Doz hatırlatmaları eposta üzerine eklendi, ufak kod düzeltmeleri,"
+  "update_notes": "Verilerin güvenliği artırıldı, eski sürümlerdeki API'ler kullanılamaz update zorunlu"
 }
