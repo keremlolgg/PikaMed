@@ -86,8 +86,6 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
     await initializeDateFormatting('tr_TR', null);
     await readFromFile((update) => setState(update));
     InsulinListData.updateDoseLists();
-    if(channelId.isEmpty)
-      channelId= await getChannelId();
     bmi = weight / ((size / 100) * (size / 100));
     if (bmi < 18.5) {
       bmiCategory = 'Zayıf';

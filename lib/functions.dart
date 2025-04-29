@@ -60,7 +60,6 @@ class Yazi {
 String apiserver = "https://keremkk.glitch.me/pikamed";
 
 String name = "", photoURL= "https://cdn.glitch.global/e74d89f5-045d-4ad2-94c7-e2c99ed95318/2815428.png?v=1738114346363",uid = '';
-String channelId = "";
 String selectedLanguage='';
 bool isEnglish=false;
 final List<String> diller = ['Türkçe','English'];
@@ -87,7 +86,6 @@ Future<void> readFromFile(Function updateState) async {
     updateState(() {
       name = jsonData['name'] ?? '';
       uid = jsonData['uid'] ?? '';
-      channelId = jsonData['channelId'] ?? '';
       photoURL = jsonData['photoURL'] ?? 'https://cdn.glitch.global/e74d89f5-045d-4ad2-94c7-e2c99ed95318/2815428.png?v=1738114346363';
       selectedLanguage = jsonData['selectedLanguage'] ?? 'Türkçe';
       targetWater = jsonData['targetWater'] ?? 3500;
@@ -119,7 +117,6 @@ Future<void> writeToFile() async {
 
   final data = {
     'name': name,
-    'channelId': channelId,
     'uid': uid,
     'photoURL': photoURL,
     'selectedLanguage': selectedLanguage,
@@ -143,15 +140,15 @@ Future<void> writeToFile() async {
 }
 Future<void> fetchUserData(Function updateState) async {
   String? token = await AuthService().getIdToken();
-  if(channelId.isEmpty)
-    channelId= await getChannelId();
-  final response = await http.get(
-    Uri.parse('$apiserver/json/$channelId'), // API URL'sini buraya ekleyin
+  final Map<String, dynamic> data = { "uid": uid};
+  final response = await http.post(
+    Uri.parse('$apiserver/userdata'), // API URL'sini buraya ekleyin
     headers: {
+      'Content-Type': 'application/json',
       'Authorization': 'Bearer $token', // Token'ı Authorization başlığına ekleyin
     },
+    body: json.encode(data),
   );
-
   if (response.statusCode == 200) {
     Map<String, dynamic> data = json.decode(response.body);
 
@@ -189,7 +186,6 @@ Future<void> resetAllData(Function updateState) async {
     name = "";
     photoURL = "https://cdn.glitch.global/e74d89f5-045d-4ad2-94c7-e2c99ed95318/2815428.png?v=1738114346363";
     uid = '';
-    channelId = '';
     selectedLanguage = '';
     isEnglish = false;
     localLanguage = '';
@@ -214,24 +210,18 @@ Future<void> resetAllData(Function updateState) async {
 Future<void> postInfo() async {
   String? token = await AuthService().getIdToken();
   notificationInfo();
-  final user = _authService.currentUser;
-  name = user?.providerData.first.displayName ?? "Bilinmeyen Kullanıcı";
-  uid = user!.uid;
-  photoURL = user.photoURL!;
   try {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String localVersion = packageInfo.version;
     String country = (await getCountry()).trim(); // Gereksiz \n karakterlerini temizledik.
 
-    // JSON verisini Map olarak oluşturduk
     final Map<String, dynamic> data = {
       "message": "Bilgi Logu",
-      "name": user.providerData.first.displayName,
-      "uid": user.uid,
-      "photoURL": user.photoURL,
+      "name": name,
+      "uid": uid,
+      "photoURL": photoURL,
       "version": localVersion,
       "country": country,
-      'channelId': channelId,
       'selectedLanguage': selectedLanguage,
       'targetWater': targetWater,
       'availableWater': availableWater,
@@ -336,9 +326,9 @@ Future<void> notificationInfo() async {
   final user = _authService.currentUser;
   try {
     final Map<String, dynamic> data = {
-      "name": user?.providerData.first.displayName,
+      "name": name,
       'email': user?.email,
-      "uid": user?.uid,
+      "uid": uid,
       'notificationRequest': notificationRequest,
       'InsulinListData': InsulinListData.insulinList.map((e) => e.toJson()).toList(),
     };
