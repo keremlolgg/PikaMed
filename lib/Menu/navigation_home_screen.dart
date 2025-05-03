@@ -82,7 +82,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
         screenView = HastaHomeScreen();  // Hasta ana ekranı göster
       });
     }
-    surumkiyasla(context);  // Yazılım sürümünü karşılaştır
+    surumKiyasla(context);
     await initializeDateFormatting('tr_TR', null);
     await readFromFile((update) => setState(update));
     InsulinListData.updateDoseLists();
@@ -136,71 +136,69 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
     );
   }
 
-  Future<void> surumkiyasla(BuildContext context) async {
+  Future<void> surumKiyasla(BuildContext context) async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String localVersion = packageInfo.version;
-    String? remoteVersion;
-    String? apkUrl;
-    String? updateNotes;
-    bool isUpdateMandatory = false;
 
     try {
       final response = await http.get(Uri.parse(
-          'https://raw.githubusercontent.com/keremlolgg/PikaMed/main/latest_version.json'));
+          'https://api.github.com/repos/KeremKuyucu/PikaMed/releases/latest'));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        String remoteVersion = data['tag_name'] ?? 'N/A';
+        String updateNotes = data['body'] ?? 'Yama notları mevcut değil';
+        String apkUrl = '';
 
-        if (data != null &&
-            data.containsKey('latest_version') &&
-            data.containsKey('apk_url') &&
-            data.containsKey('apiserver') &&
-            data.containsKey('update_notes')) {
-
-          remoteVersion = data['latest_version'] ?? 'N/A';
-          apkUrl = data['apk_url'] ?? 'N/A';
-          updateNotes = data['update_notes'] ?? 'Yama notları bulunamadı';
-
-          if (remoteVersion != localVersion && apkUrl != 'N/A') {
-            showDialog(
-              context: context,
-              barrierDismissible: !isUpdateMandatory,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text('Yeni Sürüm Var'),
-                  content: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('Mevcut Sürüm: $localVersion'),
-                      Text('Yeni Sürüm: $remoteVersion'),
-                      SizedBox(height: 10),
-                      Text('Yama Notları:'),
-                      Text(updateNotes ?? 'Yama notları mevcut değil'),
-                    ],
-                  ),
-                  actions: <Widget>[
-                    TextButton(
-                      child: Text('Güncelle'),
-                      onPressed: () {
-                        EasyLauncher.url(url: apkUrl!);
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
+        // Asset'ler arasında .apk uzantılıyı bul
+        if (data['assets'] != null && data['assets'] is List) {
+          for (var asset in data['assets']) {
+            if (asset['browser_download_url'] != null &&
+                asset['browser_download_url'].toString().endsWith('.apk')) {
+              apkUrl = asset['browser_download_url'];
+              break;
+            }
           }
-        } else {
-          throw Exception('JSON verisinde eksik anahtarlar var');
+        }
+
+        if (remoteVersion != localVersion && apkUrl.isNotEmpty) {
+          showDialog(
+            context: context,
+            barrierDismissible: true,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Yeni Sürüm Var'),
+                content: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Mevcut Sürüm: $localVersion'),
+                    Text('Yeni Sürüm: $remoteVersion'),
+                    SizedBox(height: 10),
+                    Text('Yama Notları:'),
+                    Text(updateNotes),
+                  ],
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('Güncelle'),
+                    onPressed: () {
+                      EasyLauncher.url(url: apkUrl);
+                    },
+                  ),
+                ],
+              );
+            },
+          );
         }
       } else {
-        throw Exception('Veri alınamadı. HTTP Hatası: ${response.statusCode}');
+        throw Exception('GitHub API hatası: ${response.statusCode}');
       }
     } catch (e) {
       debugPrint('Hata: $e');
     }
   }
+
 
   void changeIndex(DrawerIndex drawerIndexdata) async {
       drawerIndex = drawerIndexdata;

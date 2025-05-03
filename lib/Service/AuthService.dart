@@ -60,8 +60,8 @@ class AuthService {
         _showSnackBar(context, "Zaten giriş yapılmamış.");
       }
 
-      await _auth.signOut();
       await _logAuthAction("Çıkış");
+      await _auth.signOut();
 
 
     } catch (e) {
