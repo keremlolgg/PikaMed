@@ -15,8 +15,7 @@ PikaMed projesini faydalı buluyorsan, geliştirilmesine destek olmak için GitH
 - 🔔 Anlık bildirimler
 - 💬 Mesajlaşma özelliği
 - 📊 Hasta takip sistemi
-- 🌐 Çoklu platform desteği (Android)
-- 🌐 Çoklu platform desteği (Android, iOS, Web)
+- 🌐 Çoklu platform desteği (Android, iOS)
 - 🤖 Yapay zeka destekli hasta analizi (Gemini AI)
 
 ## Teknolojiler
