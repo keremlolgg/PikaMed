@@ -141,55 +141,51 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
     String localVersion = packageInfo.version;
 
     try {
-      final response = await http.get(Uri.parse(
-          'https://api.github.com/repos/KeremKuyucu/PikaMed/releases/latest'));
+      final response = await http.get(
+        Uri.parse('https://api.github.com/repos/KeremKuyucu/PikaMed/releases'),
+      );
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        String remoteVersion = data['tag_name'] ?? 'N/A';
-        String updateNotes = data['body'] ?? 'Yama notları mevcut değil';
-        String apkUrl = '';
+        final List<dynamic> data = json.decode(response.body);
 
-        // Asset'ler arasında .apk uzantılıyı bul
-        if (data['assets'] != null && data['assets'] is List) {
-          for (var asset in data['assets']) {
-            if (asset['browser_download_url'] != null &&
-                asset['browser_download_url'].toString().endsWith('.apk')) {
-              apkUrl = asset['browser_download_url'];
-              break;
-            }
-          }
-        }
+        if (data.isNotEmpty) {
+          final latestRelease = data[0];
+          String remoteVersion = latestRelease['tag_name'] ?? 'N/A';
+          String updateNotes = latestRelease['body'] ?? 'Yama notları mevcut değil';
 
-        if (remoteVersion != localVersion && apkUrl.isNotEmpty) {
-          showDialog(
-            context: context,
-            barrierDismissible: true,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('Yeni Sürüm Var'),
-                content: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text('Mevcut Sürüm: $localVersion'),
-                    Text('Yeni Sürüm: $remoteVersion'),
-                    SizedBox(height: 10),
-                    Text('Yama Notları:'),
-                    Text(updateNotes),
-                  ],
-                ),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text('Güncelle'),
-                    onPressed: () {
-                      EasyLauncher.url(url: apkUrl);
-                    },
+          // Sadece release sayfasına yönlendirme yapılacak
+          String releasePageUrl = 'https://github.com/KeremKuyucu/PikaMed/releases';
+
+          if (remoteVersion != localVersion) {
+            showDialog(
+              context: context,
+              barrierDismissible: true,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Yeni Sürüm Var'),
+                  content: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('Mevcut Sürüm: $localVersion'),
+                      Text('Yeni Sürüm: $remoteVersion'),
+                      SizedBox(height: 10),
+                      Text('Yama Notları:'),
+                      Text(updateNotes),
+                    ],
                   ),
-                ],
-              );
-            },
-          );
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('Güncelle'),
+                      onPressed: () {
+                        EasyLauncher.url(url: releasePageUrl);
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          }
         }
       } else {
         throw Exception('GitHub API hatası: ${response.statusCode}');
@@ -198,6 +194,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
       debugPrint('Hata: $e');
     }
   }
+
 
 
   void changeIndex(DrawerIndex drawerIndexdata) async {
@@ -220,7 +217,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
             setState(() {
               EasyLauncher.url(
                 // kendi whatsapp linkim değiştirilcek
-                url: 'https://keremkk.glitch.me/doktor',
+                url: 'https://pikamed-panel.keremkk.com.tr',
               );
             });
           } else {
@@ -269,7 +266,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
         case DrawerIndex.About:
           setState(() {
             EasyLauncher.url(
-              url: 'https://keremkk.vercel.app/pikamed',
+              url: 'https://pikamed.keremkk.com.tr',
             );
           });
           break;

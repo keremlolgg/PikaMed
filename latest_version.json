@@ -1,6 +1,0 @@
-{
-  "latest_version": "0.2.3",
-  "apk_url": "https://github.com/keremlolgg/PikaMed/releases/latest",
-  "apiserver": "https://keremkk.glitch.me/pikamed",
-  "update_notes": "Verilerin güvenliği artırıldı, eski sürümlerdeki API'ler kullanılamaz update zorunlu"
-}

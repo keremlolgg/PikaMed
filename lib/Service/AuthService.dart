@@ -33,7 +33,7 @@ class AuthService {
       final user = userCredential.user;
 
       if (user != null) {
-        name = user.displayName ?? "İsimsiz";
+        name = user.providerData.first.displayName!;
         uid = user.uid;
         photoURL = user.photoURL ?? "";
 

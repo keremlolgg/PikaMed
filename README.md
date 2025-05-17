@@ -2,6 +2,12 @@
 
 PikaMed, sağlık hizmetleri ve hasta takibi için geliştirilmiş bir mobil uygulamadır.
 
+## Projeyi Destekle
+
+PikaMed projesini faydalı buluyorsan, geliştirilmesine destek olmak için GitHub Sponsors üzerinden beni destekleyebilirsin.
+
+[![GitHub Sponsors](https://img.shields.io/badge/Destekle-GitHub-green?logo=github)](https://github.com/sponsors/KeremKuyucu)
+
 ## Özellikler
 
 - 🔐 Güvenli kullanıcı kimlik doğrulama (Firebase Authentication)
@@ -19,9 +25,6 @@ PikaMed, sağlık hizmetleri ve hasta takibi için geliştirilmiş bir mobil uyg
 - Firebase (Authentication, Analytics, Cloud Messaging)
 - Google Sign-In
 - Gemini AI
-- HTTP
-- Flutter Chat UI
-- Flutter Local Notifications
 
 ## Gereksinimler
 
