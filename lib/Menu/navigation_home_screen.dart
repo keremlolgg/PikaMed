@@ -18,6 +18,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:PikaMed/model/InsulinDose.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:PikaMed/Service/AuthService.dart';
+import 'package:markdown/markdown.dart' as md;
+import 'package:flutter_html/flutter_html.dart';
 class NavigationHomeScreen extends StatefulWidget {
   @override
   _NavigationHomeScreenState createState() => _NavigationHomeScreenState();
@@ -85,7 +87,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
     surumKiyasla(context);
     await initializeDateFormatting('tr_TR', null);
     await readFromFile((update) => setState(update));
-    InsulinListData.updateDoseLists();
+
     bmi = weight / ((size / 100) * (size / 100));
     if (bmi < 18.5) {
       bmiCategory = 'Zayıf';
@@ -153,7 +155,8 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
           String remoteVersion = latestRelease['tag_name'] ?? 'N/A';
           String updateNotes = latestRelease['body'] ?? 'Yama notları mevcut değil';
 
-          // Sadece release sayfasına yönlendirme yapılacak
+          String html = md.markdownToHtml(updateNotes);
+
           String releasePageUrl = 'https://github.com/KeremKuyucu/PikaMed/releases';
 
           if (remoteVersion != localVersion) {
@@ -163,16 +166,22 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
               builder: (BuildContext context) {
                 return AlertDialog(
                   title: Text('Yeni Sürüm Var'),
-                  content: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('Mevcut Sürüm: $localVersion'),
-                      Text('Yeni Sürüm: $remoteVersion'),
-                      SizedBox(height: 10),
-                      Text('Yama Notları:'),
-                      Text(updateNotes),
-                    ],
+                  content: SizedBox(
+                    width: double.maxFinite,
+                    height: 300,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Mevcut Sürüm: $localVersion'),
+                          Text('Yeni Sürüm: $remoteVersion'),
+                          SizedBox(height: 10),
+                          Text('Yama Notları:'),
+                          SizedBox(height: 10),
+                          Html(data: html),
+                        ],
+                      ),
+                    ),
                   ),
                   actions: <Widget>[
                     TextButton(
@@ -194,8 +203,6 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
       debugPrint('Hata: $e');
     }
   }
-
-
 
   void changeIndex(DrawerIndex drawerIndexdata) async {
       drawerIndex = drawerIndexdata;

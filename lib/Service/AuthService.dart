@@ -6,6 +6,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:PikaMed/functions.dart';
+
+import '../model/InsulinDose.dart';
 class AuthService {
   final firebase_auth.FirebaseAuth _auth = firebase_auth.FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
@@ -55,6 +57,27 @@ class AuthService {
       final user = _auth.currentUser;
 
       if (user != null) {
+        name = "";
+        photoURL = "https://cdn.glitch.global/e74d89f5-045d-4ad2-94c7-e2c99ed95318/2815428.png?v=1738114346363";
+        uid = '';
+        selectedLanguage = '';
+        isEnglish = false;
+        localLanguage = '';
+
+        targetWater = 3500;
+        availableWater = 0;
+        cupSize = 200;
+        changeWaterClock = "";
+        changeWaterDay = "";
+
+        weight = 0;
+        size = 0;
+        changeWeightClock = "";
+        bmiCategory = "";
+        bmi = 0.0;
+        notificationRequest = true;
+        InsulinListData.insulinList = [];
+        InsulinListData.updateDoseLists();
         _showSnackBar(context, '"${user.displayName ?? 'Bilinmeyen Kullanıcı'}" hesabından çıkış yapıldı.');
       } else {
         _showSnackBar(context, "Zaten giriş yapılmamış.");
