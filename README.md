@@ -6,7 +6,7 @@ Deneyap bitirme projesidir
 uygulama internet sitesi https://pikamed.keremkk.com.tr
 o kadar saçma bir sunumduki 1, 2, 3 diye sıralarsın dimi
 yok neymiş en iyi sunum, en iyi afiş, en iyi prototip
-ya adam gibi bir sıralam yapsana
+ya adam gibi bir sıralama yapsana
 gelecekte belki okurum
 
 ## Projeyi Destekle
