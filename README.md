@@ -2,6 +2,13 @@
 
 PikaMed, sağlık hizmetleri ve hasta takibi için geliştirilmiş bir mobil uygulamadır.
 
+Deneyap bitirme projesidir
+uygulama internet sitesi https://pikamed.keremkk.com.tr
+o kadar saçma bir sunumduki 1, 2, 3 diye sıralarsın dimi
+yok neymiş en iyi sunum, en iyi afiş, en iyi prototip
+ya adam gibi bir sıralam yapsana
+gelecekte belki okurum
+
 ## Projeyi Destekle
 
 PikaMed projesini faydalı buluyorsan, geliştirilmesine destek olmak için GitHub Sponsors üzerinden beni destekleyebilirsin.
